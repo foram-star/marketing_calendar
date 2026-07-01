@@ -13,6 +13,8 @@ from frappe import _
 
 
 def publish(post, platform_row):
+	if not frappe.db.exists("DocType", "Blog Post"):
+		frappe.throw(_("The Blog app is not installed. Install frappe/blog to publish blog posts."))
 	if not platform_row.blog_post:
 		frappe.throw(_("Pick a blog post before publishing {0}.").format(post.title))
 	if not frappe.db.exists("Blog Post", platform_row.blog_post):
