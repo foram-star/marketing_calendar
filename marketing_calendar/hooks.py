@@ -8,18 +8,20 @@ app_license = "mit"
 # Apps
 # ------------------
 
-# required_apps = []
+# The Blog connector links to Blog Post/Blog Category/Blogger from that app.
+required_apps = ["blog"]
 
 # Each item in the list will be shown as an app in the apps page
-# add_to_apps_screen = [
-# 	{
-# 		"name": "marketing_calendar",
-# 		"logo": "/assets/marketing_calendar/logo.png",
-# 		"title": "Marketing Calendar",
-# 		"route": "/marketing_calendar",
-# 		"has_permission": "marketing_calendar.api.permission.has_app_permission"
-# 	}
-# ]
+# Route points straight at the standalone SPA, not a Desk workspace — there's
+# no Desk-based UI for this app to land in.
+add_to_apps_screen = [
+	{
+		"name": "marketing_calendar",
+		"logo": "/assets/marketing_calendar/frontend/favicon.svg",
+		"title": "Marketing Calendar",
+		"route": "/marketing",
+	}
+]
 
 # Includes in <head>
 # ------------------
@@ -59,6 +61,14 @@ app_license = "mit"
 # application home page (will override Website Settings)
 # home_page = "login"
 
+# Website route rules
+# --------------------
+# Lets the Vue Router inside the /marketing SPA own any sub-path
+# (e.g. /marketing/posts) instead of Frappe's website router 404ing on it.
+website_route_rules = [
+	{"from_route": "/marketing/<path:app_path>", "to_route": "marketing"},
+]
+
 # website user home page (by Role)
 # role_home_page = {
 # 	"Role": "home_page"
@@ -85,8 +95,7 @@ app_license = "mit"
 # Installation
 # ------------
 
-# before_install = "marketing_calendar.install.before_install"
-# after_install = "marketing_calendar.install.after_install"
+after_install = "marketing_calendar.install.after_install"
 
 # Uninstallation
 # ------------
@@ -149,23 +158,17 @@ app_license = "mit"
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"marketing_calendar.tasks.all"
-# 	],
-# 	"daily": [
-# 		"marketing_calendar.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"marketing_calendar.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"marketing_calendar.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"marketing_calendar.tasks.monthly"
-# 	],
-# }
+# Without this, `scheduled_on` is just a label — nothing ever actually fires
+# a Scheduled post on its own. Runs every 5 minutes rather than on "all"
+# (every scheduler tick) since publishing is not so time-critical that it
+# needs sub-minute precision, and this keeps the check cheap.
+scheduler_events = {
+	"cron": {
+		"*/5 * * * *": [
+			"marketing_calendar.tasks.publish_due_posts",
+		],
+	},
+}
 
 # Testing
 # -------
