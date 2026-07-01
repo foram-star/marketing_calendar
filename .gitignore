@@ -53,3 +53,11 @@ jspm_packages/
 
 # Aider AI Chat
 .aider*
+
+# Vite / frontend build cache (source maps are large; built assets in
+# marketing_calendar/public/frontend/ ARE committed so the app works
+# out-of-the-box when installed on another Frappe instance)
+frontend/.vite/
+frontend/dist/
+frontend/**/*.js.map
+frontend/**/*.css.map

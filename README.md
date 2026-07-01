@@ -1,33 +1,66 @@
-### Marketing Calendar
+# Marketing Calendar
 
-Real-time marketing content calendar with multi-platform scheduling and publishing
+A [Frappe](https://github.com/frappe/frappe) app for planning, scheduling, and publishing marketing content across multiple platforms from a single calendar view.
 
-### Installation
+## Features
 
-You can install this app using the [bench](https://github.com/frappe/bench) CLI:
+- **Visual calendar** — drag-and-drop content planning across weeks and months
+- **Multi-platform publishing** — publish to Instagram, LinkedIn, X (Twitter), and Frappe Blog in one click
+- **Approval workflow** — Draft → In Review → Approved → Scheduled → Published with role-based gates
+- **Asset gallery** — manage images and creatives attached to posts
+- **Projects & tasks** — group posts under campaigns and track to-dos
+- **Analytics** — post status breakdown, per-platform counts, and recent failure log
+- **OAuth integrations** — connect Instagram (Meta Business Login), LinkedIn, and X via standard OAuth2/PKCE flows
+
+## Requirements
+
+- Frappe v16+
+- The [`blog`](https://github.com/frappe/frappe) app (for Blog Post integration)
+- Python 3.11+, Node 18+
+
+## Installation
 
 ```bash
 cd $PATH_TO_YOUR_BENCH
-bench get-app $URL_OF_THIS_REPO --branch version-16
+bench get-app https://github.com/foram-star/marketing_calendar.git --branch version-16
 bench install-app marketing_calendar
 ```
 
-### Contributing
+After installation, navigate to `/marketing` on your Frappe site.
 
-This app uses `pre-commit` for code formatting and linting. Please [install pre-commit](https://pre-commit.com/#installation) and enable it for this repository:
+## Configuration
+
+Go to **Marketing Calendar Settings** (or `/marketing/settings`) and add credentials for each platform you want to use:
+
+| Platform  | Credentials needed |
+|-----------|--------------------|
+| Instagram | Meta App ID, App Secret, Redirect URI, Webhook Verify Token |
+| LinkedIn  | Client ID, Client Secret, Redirect URI |
+| X         | Client ID, Client Secret, Redirect URI |
+| Blog      | No credentials — uses the built-in Frappe Blog app |
+
+## Roles
+
+`after_install` creates two roles:
+
+- **Marketing User** — create and submit posts for review
+- **Marketing Manager** — approve, schedule, and manage all posts
+
+## Development
 
 ```bash
+# Python
 cd apps/marketing_calendar
-pre-commit install
+pre-commit install   # ruff, pyupgrade, eslint, prettier
+
+# Frontend (Vue 3 + Vite + frappe-ui)
+cd frontend
+npm install
+npm run dev
 ```
 
-Pre-commit is configured to use the following tools for checking and formatting your code:
+Built assets are committed under `marketing_calendar/public/frontend/` so the app works out-of-the-box on a fresh install without a separate build step.
 
-- ruff
-- eslint
-- prettier
-- pyupgrade
+## License
 
-### License
-
-mit
+MIT — see [license.txt](license.txt)
