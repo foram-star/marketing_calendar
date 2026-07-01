@@ -8,9 +8,9 @@ app_license = "mit"
 # Apps
 # ------------------
 
-# blog is optional — the Blog platform integration works when frappe/blog is
-# installed, but marketing_calendar installs and runs without it.
-optional_apps = ["blog"]
+# The Blog connector links to Blog Post/Blog Category/Blogger from that app.
+# Use frappe/blog@version-16 — that branch targets Frappe 16.x.
+required_apps = ["blog"]
 
 # Each item in the list will be shown as an app in the apps page
 # Route points straight at the standalone SPA, not a Desk workspace — there's
