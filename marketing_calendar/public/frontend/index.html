@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/assets/marketing_calendar/frontend/favicon.svg?v=3" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Marketing Calendar</title>
+    <script type="module" crossorigin src="/assets/marketing_calendar/frontend/assets/index-BjpuKvzq.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/marketing_calendar/frontend/assets/vue.runtime.esm-bundler-4jzAgvDg.js">
+    <link rel="modulepreload" crossorigin href="/assets/marketing_calendar/frontend/assets/debounce-BBu4h0MQ.js">
+    <link rel="modulepreload" crossorigin href="/assets/marketing_calendar/frontend/assets/resources-ObMRgPDt.js">
+    <link rel="stylesheet" crossorigin href="/assets/marketing_calendar/frontend/assets/index-BJpR-F-Q.css">
+  </head>
+  <body>
+    <div id="app"></div>
+  
+          <script>
+              {% for key in boot %}
+              window["{{ key }}"] = {{ boot[key] | tojson }};
+              {% endfor %}
+          </script>
+          </body>
+          
+</html>
