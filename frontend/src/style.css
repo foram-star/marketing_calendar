@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #app {
+  height: 100%;
+}
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* frappe-ui's own Popover (DateTimePicker, etc.) and Dialog both portal to
+   <body> with no explicit z-index, so they paint underneath any element in
+   this app that has its own explicit z-index (e.g. CalendarView's sticky
+   day-header or hover tooltip) even though they're later in the DOM —
+   z-index only resolves against siblings sharing a stacking context, and an
+   explicit value always beats the implicit 0 "auto" they're left with.
+   Bump both above every z-index used anywhere in this app (max so far: 90). */
+.PopoverContent {
+  z-index: 60;
+}
+.dialog-overlay,
+.dialog-content {
+  z-index: 100;
+}
