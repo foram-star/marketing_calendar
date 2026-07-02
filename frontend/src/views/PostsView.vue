@@ -82,9 +82,12 @@ function onSaved() {
   <header class="flex items-center gap-3.5 border-b border-gray-100 bg-white px-6 pb-3.5 pt-4">
     <div class="flex flex-col gap-0.5">
       <h1 class="m-0 text-[17px] font-semibold">All Posts</h1>
-      <span class="text-[12px] text-gray-400">{{ postsTable.data?.length || 0 }} posts</span>
+      <span class="text-[12px] text-ink-gray-5">{{ postsTable.data?.length || 0 }} posts</span>
     </div>
-    <Button variant="solid" class="ml-auto" @click="openNew">+ Schedule post</Button>
+    <Button variant="solid" class="ml-auto" @click="openNew">
+      <template #prefix><LucidePlus class="h-3.5 w-3.5" /></template>
+      Schedule post
+    </Button>
   </header>
 
   <!-- Inline filter bar — [Field] [≈] [Value ▾] chip pattern -->
@@ -182,17 +185,17 @@ function onSaved() {
 
   <div class="flex-1 overflow-auto p-6">
     <div class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
-      <div class="grid grid-cols-[1fr_150px_112px_156px_110px] border-b border-gray-100 bg-gray-25 px-4 py-2.5 text-[10.5px] font-semibold uppercase tracking-wide text-gray-400">
+      <div class="grid grid-cols-[1fr_150px_112px_156px_110px] border-b border-gray-100 bg-surface-gray-1 px-4 py-2.5 text-[10.5px] font-semibold uppercase tracking-wide text-ink-gray-5">
         <span>Post</span><span>Channels</span><span>Status</span><span>Owner</span><span>Date</span>
       </div>
       <div
         v-for="post in postsTable.data || []"
         :key="post.name"
-        class="grid grid-cols-[1fr_150px_112px_156px_110px] items-center border-b border-gray-50 px-4 py-3 last:border-0 hover:bg-gray-25"
+        class="grid grid-cols-[1fr_150px_112px_156px_110px] items-center border-b border-gray-50 px-4 py-3 last:border-0 hover:bg-surface-gray-1"
       >
         <div class="min-w-0 cursor-pointer pr-3.5" @click="openPost(post)">
           <div class="truncate text-[13px] font-semibold text-gray-900 hover:underline">{{ post.title }}</div>
-          <div v-if="post.platforms?.[0]?.caption" class="truncate text-[11.5px] text-gray-400">{{ post.platforms[0].caption }}</div>
+          <div v-if="post.platforms?.[0]?.caption" class="truncate text-[11.5px] text-ink-gray-5">{{ post.platforms[0].caption }}</div>
         </div>
         <div class="flex flex-wrap gap-1">
           <button v-for="p in post.platforms" :key="p.platform" class="cursor-pointer" @click="filterByPlatform(p.platform)">
@@ -217,7 +220,7 @@ function onSaved() {
           <span class="text-[10.5px] text-gray-400">{{ fmtTime(post._dt?.time) }}</span>
         </div>
       </div>
-      <div v-if="!(postsTable.data || []).length" class="p-11 text-center text-[13px] text-gray-400">
+      <div v-if="!(postsTable.data || []).length" class="p-11 text-center text-[13px] text-ink-gray-5">
         No posts match these filters.
       </div>
     </div>

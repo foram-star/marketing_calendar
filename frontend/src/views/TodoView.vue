@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Button } from 'frappe-ui'
+import { Button, TextInput } from 'frappe-ui'
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
 import LucideChevronsUpDown from '~icons/lucide/chevrons-up-down'
 import LucideX from '~icons/lucide/x'
@@ -72,7 +72,7 @@ function projectTitle(name) {
   <header class="flex items-center gap-3.5 border-b border-gray-100 bg-white px-6 pb-3.5 pt-4">
     <div class="flex flex-col gap-0.5">
       <h1 class="m-0 text-[17px] font-semibold">Todo</h1>
-      <span class="text-[12px] text-gray-400">{{ pendingTodos.length }} open · {{ doneTodos.length }} done</span>
+      <span class="text-[12px] text-ink-gray-5">{{ pendingTodos.length }} open · {{ doneTodos.length }} done</span>
     </div>
     <button
       v-if="filteredProject"
@@ -87,16 +87,16 @@ function projectTitle(name) {
   <div class="flex-1 overflow-y-auto p-6">
     <div class="mx-auto flex max-w-[640px] flex-col gap-4">
       <div class="flex items-center gap-2 rounded-xl border border-gray-100 bg-white p-2 shadow-sm">
-        <input
+        <TextInput
           v-model="newTitle"
           placeholder="Add a task and press Enter…"
-          class="flex-1 border-none px-2 text-[13px] outline-none"
+          class="flex-1"
           @keydown.enter="addTodo"
         />
         <Popover class="relative shrink-0">
           <PopoverButton as="div">
-            <div class="flex h-10 w-[190px] cursor-pointer items-center gap-1.5 rounded-md border border-gray-200 bg-white px-2.5 text-[13px] text-gray-700">
-              <span class="flex-1 truncate" :class="selectedProject ? 'text-gray-800' : 'text-gray-400'">
+            <div class="flex h-7 w-[190px] cursor-pointer items-center gap-1.5 rounded-md border border-gray-200 bg-white px-2.5 text-[13px] text-gray-700">
+              <span class="flex-1 truncate" :class="selectedProject ? 'text-gray-800' : 'text-ink-gray-5'">
                 {{ selectedProject ? projectTitle(selectedProject) : 'No project' }}
               </span>
               <LucideChevronsUpDown class="h-3.5 w-3.5 shrink-0 text-gray-400" />
@@ -133,21 +133,21 @@ function projectTitle(name) {
           >
             {{ projectTitle(todo.marketing_project) }}
           </button>
-          <span v-if="todo.assigned_to" class="shrink-0 text-[10.5px] text-gray-400">{{ memberById(todo.assigned_to).name }}</span>
+          <span v-if="todo.assigned_to" class="shrink-0 text-[10.5px] text-ink-gray-5">{{ memberById(todo.assigned_to).name }}</span>
           <LucideTrash2 class="h-3.5 w-3.5 shrink-0 cursor-pointer text-gray-300 opacity-0 group-hover:opacity-100 hover:text-red-500" @click="removeTodo(todo)" />
         </div>
-        <div v-if="!pendingTodos.length" class="rounded-lg border border-dashed border-gray-200 p-5 text-center text-[12px] text-gray-400">
+        <div v-if="!pendingTodos.length" class="rounded-lg border border-dashed border-gray-200 p-5 text-center text-[12px] text-ink-gray-5">
           Nothing open{{ filteredProject ? ` for ${filteredProject.title}` : '' }} — add one above.
         </div>
       </div>
 
       <div v-if="doneTodos.length" class="flex flex-col gap-1.5">
-        <span class="px-1 text-[11px] font-medium uppercase tracking-wide text-gray-400">Done · {{ doneTodos.length }}</span>
+        <span class="px-1 text-[11px] font-medium uppercase tracking-wide text-ink-gray-5">Done · {{ doneTodos.length }}</span>
         <div
           v-for="todo in doneTodos"
           :key="todo.name"
           :data-testid="`todo-${todo.name}`"
-          class="group flex items-center gap-2.5 rounded-lg border border-gray-100 bg-gray-25 px-3 py-2.5"
+          class="group flex items-center gap-2.5 rounded-lg border border-gray-100 bg-surface-gray-1 px-3 py-2.5"
         >
           <button
             class="flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full bg-gray-800 text-white"
@@ -155,10 +155,10 @@ function projectTitle(name) {
           >
             <svg viewBox="0 0 16 16" class="h-2.5 w-2.5" fill="none"><path d="M3 8.5L6 11.5L13 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
           </button>
-          <span class="flex-1 text-[13px] text-gray-400 line-through">{{ todo.title }}</span>
+          <span class="flex-1 text-[13px] text-ink-gray-5 line-through">{{ todo.title }}</span>
           <button
             v-if="todo.marketing_project"
-            class="shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-[10.5px] font-medium text-gray-400 hover:bg-gray-200"
+            class="shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-[10.5px] font-medium text-ink-gray-5 hover:bg-gray-200"
             @click="router.push({ name: 'Todo', query: { project: todo.marketing_project } })"
           >
             {{ projectTitle(todo.marketing_project) }}

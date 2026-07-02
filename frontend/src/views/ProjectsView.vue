@@ -133,7 +133,7 @@ function goToProjectFilter(projectName) {
     <div class="flex flex-col gap-0.5">
       <h1 class="m-0 text-[17px] font-semibold">Projects</h1>
       <div class="flex items-center gap-2">
-        <span class="text-[12px] text-gray-400">
+        <span class="text-[12px] text-ink-gray-5">
           <template v-if="currentView === 'kanban'">{{ projectsResource.data?.length || 0 }} projects</template>
           <template v-else>{{ pendingTodos.length }} open · {{ doneTodos.length }} done</template>
         </span>
@@ -165,7 +165,8 @@ function goToProjectFilter(projectName) {
       </div>
       <Button variant="solid" class="min-w-[120px] justify-center"
         @click="currentView === 'kanban' ? openNewProject() : focusTaskInput()">
-        {{ currentView === 'kanban' ? '+ New project' : '+ New task' }}
+        <template #prefix><LucidePlus class="h-3.5 w-3.5" /></template>
+        {{ currentView === 'kanban' ? 'New project' : 'New task' }}
       </Button>
     </div>
   </header>
@@ -211,18 +212,18 @@ function goToProjectFilter(projectName) {
               </button>
               <button
                 v-else
-                class="ml-auto rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-400 hover:bg-gray-200"
+                class="ml-auto flex items-center gap-0.5 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-ink-gray-5 hover:bg-gray-200"
                 @click.stop="goToProjectTodo(project.name)"
-              >+ tasks</button>
+              ><LucidePlus class="h-2.5 w-2.5" /> tasks</button>
             </div>
             <div class="mb-2 text-[13px] font-semibold leading-snug text-gray-900">{{ project.title }}</div>
             <div class="flex items-center gap-1.5">
               <Avatar :label="memberById(project.project_owner).name" :image="memberById(project.project_owner).image" size="sm" />
               <span class="truncate text-[11px] text-gray-500">{{ memberById(project.project_owner).name }}</span>
-              <span v-if="project.due_date" class="ml-auto text-[10.5px] text-gray-400">{{ dueLabel(project.due_date) }}</span>
+              <span v-if="project.due_date" class="ml-auto text-[10.5px] text-ink-gray-5">{{ dueLabel(project.due_date) }}</span>
             </div>
           </div>
-          <div v-if="!byStage[stage].length" class="py-4 text-center text-[11.5px] text-gray-400">
+          <div v-if="!byStage[stage].length" class="py-4 text-center text-[11.5px] text-ink-gray-5">
             Nothing here
           </div>
         </div>
@@ -278,20 +279,20 @@ function goToProjectFilter(projectName) {
             class="shrink-0 rounded-full bg-gray-100 px-2 py-0.5 text-[10.5px] font-medium text-gray-500 hover:bg-gray-200"
             @click="goToProjectFilter(todo.marketing_project)"
           >{{ projectTitle(todo.marketing_project) }}</button>
-          <span v-if="todo.assigned_to" class="shrink-0 text-[10.5px] text-gray-400">{{ memberById(todo.assigned_to).name }}</span>
+          <span v-if="todo.assigned_to" class="shrink-0 text-[10.5px] text-ink-gray-5">{{ memberById(todo.assigned_to).name }}</span>
           <LucideTrash2 class="h-3.5 w-3.5 shrink-0 cursor-pointer text-gray-300 opacity-0 group-hover:opacity-100 hover:text-red-500" @click="removeTodo(todo)" />
         </div>
-        <div v-if="!pendingTodos.length" class="py-5 text-center text-[12px] text-gray-400">
+        <div v-if="!pendingTodos.length" class="py-5 text-center text-[12px] text-ink-gray-5">
           Nothing open{{ filteredProject ? ` for "${filteredProject.title}"` : '' }} — add one above.
         </div>
       </div>
 
       <div v-if="doneTodos.length" class="flex flex-col gap-1.5">
-        <span class="px-1 text-[11px] font-medium uppercase tracking-wide text-gray-400">Done · {{ doneTodos.length }}</span>
+        <span class="px-1 text-[11px] font-medium uppercase tracking-wide text-ink-gray-5">Done · {{ doneTodos.length }}</span>
         <div
           v-for="todo in doneTodos"
           :key="todo.name"
-          class="group flex items-center gap-2.5 rounded-lg border border-gray-100 bg-gray-25 px-3 py-2.5"
+          class="group flex items-center gap-2.5 rounded-lg border border-gray-100 bg-surface-gray-1 px-3 py-2.5"
         >
           <button
             class="flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full bg-gray-800 text-white"

@@ -168,9 +168,12 @@ function onPillLeave() {
   <header class="flex items-center gap-3.5 border-b border-gray-100 bg-white px-6 pb-3.5 pt-4">
     <div class="flex flex-col gap-0.5">
       <h1 class="m-0 text-[17px] font-semibold">Content Calendar</h1>
-      <span class="text-[12px] text-gray-400">Plan & schedule posts across platforms</span>
+      <span class="text-[12px] text-ink-gray-5">Plan & schedule posts across platforms</span>
     </div>
-    <Button variant="solid" class="ml-auto" @click="openCompose(null)">+ Schedule post</Button>
+    <Button variant="solid" class="ml-auto" @click="openCompose(null)">
+      <template #prefix><LucidePlus class="h-3.5 w-3.5" /></template>
+      Schedule post
+    </Button>
   </header>
 
   <div class="flex flex-wrap items-center gap-3.5 border-b border-gray-100 bg-white px-6 py-3">
@@ -224,18 +227,18 @@ function onPillLeave() {
       </Popover>
 
       <div class="flex items-center gap-2">
-        <span class="text-[11.5px] font-medium text-gray-400">Color by</span>
+        <span class="text-[11.5px] font-medium text-ink-gray-5">Color by</span>
         <div class="flex rounded-lg bg-gray-100 p-0.5">
           <button
             class="rounded-md px-2.5 py-1 text-[12px] font-semibold"
-            :class="colorBy === 'platform' ? 'bg-white shadow-sm' : 'text-gray-400'"
+            :class="colorBy === 'platform' ? 'bg-white shadow-sm' : 'text-ink-gray-5'"
             @click="colorBy = 'platform'"
           >
             Platform
           </button>
           <button
             class="rounded-md px-2.5 py-1 text-[12px] font-semibold"
-            :class="colorBy === 'member' ? 'bg-white shadow-sm' : 'text-gray-400'"
+            :class="colorBy === 'member' ? 'bg-white shadow-sm' : 'text-ink-gray-5'"
             @click="colorBy = 'member'"
           >
             Member
@@ -245,14 +248,14 @@ function onPillLeave() {
       <div class="flex rounded-lg bg-gray-100 p-0.5">
         <button
           class="rounded-md px-3 py-1 text-[12px] font-semibold"
-          :class="view === 'month' ? 'bg-white shadow-sm' : 'text-gray-400'"
+          :class="view === 'month' ? 'bg-white shadow-sm' : 'text-ink-gray-5'"
           @click="view = 'month'"
         >
           Month
         </button>
         <button
           class="rounded-md px-3 py-1 text-[12px] font-semibold"
-          :class="view === 'week' ? 'bg-white shadow-sm' : 'text-gray-400'"
+          :class="view === 'week' ? 'bg-white shadow-sm' : 'text-ink-gray-5'"
           @click="view = 'week'"
         >
           Week
@@ -261,8 +264,8 @@ function onPillLeave() {
     </div>
   </div>
 
-  <div class="flex items-center gap-4.5 border-b border-gray-100 bg-gray-25 px-6 py-2.5">
-    <span class="text-[11px] font-medium uppercase tracking-wide text-gray-400">
+  <div class="flex items-center gap-4.5 border-b border-gray-100 bg-surface-gray-1 px-6 py-2.5">
+    <span class="text-[11px] font-medium uppercase tracking-wide text-ink-gray-5">
       {{ colorBy === 'platform' ? 'Platforms' : 'Team' }}
     </span>
     <div class="flex flex-wrap items-center gap-4">
@@ -287,7 +290,7 @@ function onPillLeave() {
     <!-- MONTH VIEW -->
     <div v-if="view === 'month'">
       <div class="sticky top-0 z-[5] grid grid-cols-7 border-b border-gray-100 bg-white">
-        <div v-for="wd in WEEKDAYS" :key="wd" class="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+        <div v-for="wd in WEEKDAYS" :key="wd" class="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-ink-gray-5">
           {{ wd }}
         </div>
       </div>
@@ -296,7 +299,7 @@ function onPillLeave() {
           v-for="day in week.days"
           :key="day.iso"
           class="flex min-h-[124px] cursor-pointer flex-col gap-1.5 border-b border-r border-gray-100 p-2"
-          :class="day.today ? 'bg-gray-50' : day.inMonth ? 'bg-white' : 'bg-gray-25'"
+          :class="day.today ? 'bg-gray-50' : day.inMonth ? 'bg-white' : 'bg-surface-gray-1'"
           @click="openDay(day)"
         >
           <div class="flex items-center justify-between">
@@ -317,7 +320,7 @@ function onPillLeave() {
               @enter="onPillEnter"
               @leave="onPillLeave"
             />
-            <span v-if="day.hasMore" class="pl-1 text-[10.5px] font-semibold text-gray-400">+{{ day.more }} more</span>
+            <span v-if="day.hasMore" class="pl-1 text-[10.5px] font-semibold text-ink-gray-5">+{{ day.more }} more</span>
           </div>
         </div>
       </div>
@@ -333,7 +336,7 @@ function onPillLeave() {
         @click="openDay(day)"
       >
         <div class="sticky top-0 flex flex-col gap-0.5 border-b border-gray-100 bg-inherit px-3 py-2.5">
-          <span class="text-[10.5px] font-semibold uppercase tracking-wide text-gray-400">{{ day.weekday }}</span>
+          <span class="text-[10.5px] font-semibold uppercase tracking-wide text-ink-gray-5">{{ day.weekday }}</span>
           <span class="text-[18px] font-semibold" :class="day.today ? 'text-gray-900' : ''">{{ day.d }}</span>
         </div>
         <div class="flex flex-1 flex-col gap-1.5 p-2">

@@ -48,7 +48,7 @@ function fmtCount(n) {
       <div class="flex max-h-[88vh] flex-col">
         <div class="flex items-center gap-3 border-b border-gray-100 px-5 py-4">
           <h2 class="m-0 text-[15px] font-semibold">Preview</h2>
-          <span class="text-[11.5px] text-gray-400">Mock layout — nothing is fetched from the real platform</span>
+          <span class="text-[11.5px] text-ink-gray-5">Mock layout — nothing is fetched from the real platform</span>
         </div>
 
         <div v-if="platforms.length > 1" class="flex flex-wrap gap-1.5 border-b border-gray-100 px-5 py-3">
@@ -64,7 +64,7 @@ function fmtCount(n) {
         </div>
 
         <div class="flex-1 overflow-auto bg-gray-50 px-5 py-5">
-          <p v-if="!active" class="m-0 text-center text-[12.5px] text-gray-400">Pick a platform first.</p>
+          <p v-if="!active" class="m-0 text-center text-[12.5px] text-ink-gray-5">Pick a platform first.</p>
 
           <!-- ================= INSTAGRAM ================= -->
           <div v-else-if="active.id === 'instagram'" class="mx-auto w-[320px] overflow-hidden rounded-lg border border-gray-200 bg-white">
