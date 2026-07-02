@@ -159,7 +159,7 @@ async function onDelete() {
 
           <div v-if="project" class="flex flex-col gap-1.5 border-t border-gray-100 pt-4">
             <label class="text-[12px] font-medium text-gray-700">
-              Tasks<template v-if="projectTasks.length"> <span class="text-ink-gray-5">· {{ projectTasks.filter((t) => t.done).length }}/{{ projectTasks.length }} done</span></template>
+              Tasks<template v-if="projectTasks.length"> <span class="text-ink-gray-6">· {{ projectTasks.filter((t) => t.done).length }}/{{ projectTasks.length }} done</span></template>
             </label>
             <div class="flex items-center gap-2">
               <TextInput
@@ -185,14 +185,14 @@ async function onDelete() {
                 <span class="flex-1 text-[12.5px]" :class="t.done ? 'text-gray-400 line-through' : 'text-gray-800'">{{ t.title }}</span>
                 <LucideTrash2 class="h-3 w-3 shrink-0 cursor-pointer text-gray-300 opacity-0 group-hover:opacity-100 hover:text-red-500" @click="removeTask(t)" />
               </div>
-              <p v-if="!projectTasks.length" class="m-0 py-1 text-[11.5px] text-ink-gray-5">No tasks linked yet.</p>
+              <p v-if="!projectTasks.length" class="m-0 py-1 text-[11.5px] text-ink-gray-6">No tasks linked yet.</p>
             </div>
           </div>
         </div>
       </div>
 
       <div class="flex items-center gap-2.5 border-t border-gray-100 px-5 py-3.5">
-        <span class="text-[11.5px]" :class="errorMessage ? 'font-semibold text-red-600' : 'text-ink-gray-5'">
+        <span class="text-[11.5px]" :class="errorMessage ? 'font-semibold text-red-600' : 'text-ink-gray-6'">
           {{ errorMessage || (canSave ? 'Ready to save' : 'Title is required') }}
         </span>
         <div class="ml-auto flex gap-2">

@@ -451,22 +451,7 @@ async function onSave() {
   }
 }
 
-// Two-step confirm in place, instead of a second (nested-Dialog) popup —
-// click once to arm it, click again within a few seconds to actually
-// delete; arming reverts on its own otherwise so a stray click can't delete
-// anything by itself.
-const deleteArmed = ref(false)
 const deleting = ref(false)
-let deleteArmTimer = null
-function onDeleteClick() {
-  if (!deleteArmed.value) {
-    deleteArmed.value = true
-    deleteArmTimer = setTimeout(() => (deleteArmed.value = false), 4000)
-    return
-  }
-  clearTimeout(deleteArmTimer)
-  onDelete()
-}
 async function onDelete() {
   if (!livePost.name || deleting.value) return
   deleting.value = true
@@ -477,7 +462,6 @@ async function onDelete() {
     emit('close')
   } catch (e) {
     errorMessage.value = e?.messages?.[0] || 'Could not delete this post.'
-    deleteArmed.value = false
   } finally {
     deleting.value = false
   }
@@ -526,7 +510,7 @@ async function onDelete() {
                 :class="currentStepKey === step.key ? 'bg-gray-800 text-white' : 'border border-gray-300 text-gray-400'"
                 >{{ idx + 1 }}</span
               >
-              <span class="text-[12.5px] font-medium" :class="currentStepKey === step.key ? 'text-gray-900' : 'text-ink-gray-5'">{{ step.label }}</span>
+              <span class="text-[12.5px] font-medium" :class="currentStepKey === step.key ? 'text-gray-900' : 'text-ink-gray-6'">{{ step.label }}</span>
             </button>
             <div v-if="idx < STEPS.length - 1" class="mx-1 h-px w-8 shrink-0 bg-gray-200" />
           </template>
@@ -546,7 +530,7 @@ async function onDelete() {
               @click="togglePlatform(p.id)"
             >
               <div class="flex items-center gap-2">
-                <PlatformBadge :platform="p" variant="dot" />
+                <PlatformBadge :platform="p" variant="icon" size="md" class="text-gray-700" />
                 <span class="text-[13px] font-semibold">{{ p.name }}</span>
                 <LucideCheckCircle2 v-if="form.platforms[p.id].selected" class="ml-auto h-4.5 w-4.5 text-gray-800" />
               </div>
@@ -557,7 +541,7 @@ async function onDelete() {
         <!-- STEP 2: CREATIVE -->
         <section v-if="currentStepKey === 'creative'" class="py-4.5" :class="isReadOnly ? 'pointer-events-none opacity-50' : ''">
           <h3 class="m-0 mb-3 text-[14px] font-semibold">Creative</h3>
-          <p v-if="!selectedPlatforms.length" class="m-0 ml-0 text-[12.5px] text-ink-gray-5">Select platform(s) first.</p>
+          <p v-if="!selectedPlatforms.length" class="m-0 ml-0 text-[12.5px] text-ink-gray-6">Select platform(s) first.</p>
           <template v-else>
           <div v-if="showUpload" class="ml-0 mb-3 flex flex-col gap-1.5">
             <div v-for="p in selectedPlatforms" :key="p.id" class="flex items-center gap-2 rounded-lg border border-gray-100 px-2.5 py-2">
@@ -577,7 +561,7 @@ async function onDelete() {
             >
               <LucideUpload class="h-6 w-6 text-gray-400" />
               <span class="text-[13px] font-semibold text-gray-700">Drag & drop, or click to browse</span>
-              <span class="text-[11.5px] text-ink-gray-5">PNG, JPG, MP4 — up to 4 assets for a carousel</span>
+              <span class="text-[11.5px] text-ink-gray-6">PNG, JPG, MP4 — up to 4 assets for a carousel</span>
               <input ref="fileInput" type="file" accept="image/*,video/*" multiple class="hidden" @change="onFileInputChange" @click.stop />
             </div>
 
@@ -601,7 +585,7 @@ async function onDelete() {
                     <div class="truncate text-[12.5px] font-semibold">
                       {{ asset.uploading ? 'Uploading…' : asset.file_type }}
                     </div>
-                    <div class="text-[11px] text-ink-gray-5">{{ asset.width }}×{{ asset.height }}px</div>
+                    <div class="text-[11px] text-ink-gray-6">{{ asset.width }}×{{ asset.height }}px</div>
                   </div>
                   <button class="flex h-6.5 w-6.5 shrink-0 items-center justify-center rounded-md bg-gray-100 text-gray-400" @click="removeAsset(asset.id)">
                     <LucideX class="h-3.5 w-3.5" />
@@ -636,11 +620,11 @@ async function onDelete() {
                     <LucideImage v-else class="h-full w-full p-2 text-gray-300" />
                   </div>
                   <div class="flex flex-col gap-0.5">
-                    <button class="flex items-center gap-1 self-start text-[11.5px] font-medium text-ink-gray-5 hover:text-gray-700" @click="$refs.thumbInput[idx].click()">
+                    <button class="flex items-center gap-1 self-start text-[11.5px] font-medium text-ink-gray-6 hover:text-gray-700" @click="$refs.thumbInput[idx].click()">
                       <LucidePlus v-if="!asset.thumbnail_url" class="h-3 w-3" />
                       {{ asset.thumbnail_url ? 'Replace thumbnail' : 'Add thumbnail' }}
                     </button>
-                    <span class="text-[10.5px] text-ink-gray-5">Custom cover image for this video (optional) — Instagram only for now</span>
+                    <span class="text-[10.5px] text-ink-gray-6">Custom cover image for this video (optional) — Instagram only for now</span>
                   </div>
                   <input ref="thumbInput" type="file" accept="image/*" class="hidden" @change="onThumbnailChange(asset, $event)" />
                 </div>
@@ -655,11 +639,11 @@ async function onDelete() {
           <h3 class="m-0 mb-3 text-[14px] font-semibold">Content</h3>
           <div class="ml-0 flex flex-col gap-3.5">
             <div class="flex flex-col gap-1.5">
-              <label class="text-[12px] font-medium text-gray-700">Title <span class="text-ink-gray-5">· internal reference</span></label>
+              <label class="text-[12px] font-medium text-gray-700">Title <span class="text-ink-gray-6">· internal reference</span></label>
               <TextInput v-model="form.title" placeholder="e.g. June product launch teaser" />
             </div>
             <div class="flex flex-col gap-1.5">
-              <label class="text-[12px] font-medium text-gray-700">Internal tags <span class="text-ink-gray-5">· for organizing this calendar, not posted anywhere</span></label>
+              <label class="text-[12px] font-medium text-gray-700">Internal tags <span class="text-ink-gray-6">· for organizing this calendar, not posted anywhere</span></label>
               <div class="flex flex-wrap items-center gap-1.5 rounded-md border border-gray-200 px-2.5 py-2">
                 <span
                   v-for="t in form.tags"
@@ -681,7 +665,7 @@ async function onDelete() {
             <!-- per-platform caption + options -->
             <div v-for="p in selectedPlatforms" :key="p.id" :data-testid="`platform-section-${p.id}`" class="rounded-xl border border-gray-100 p-3.5">
               <div class="mb-2.5 flex items-center gap-2">
-                <PlatformBadge :platform="p" variant="dot" />
+                <PlatformBadge :platform="p" variant="icon" class="text-gray-700" />
                 <span class="text-[12.5px] font-semibold text-gray-800">{{ p.name }}</span>
                 <span
                   v-if="counterFor(p)"
@@ -699,7 +683,7 @@ async function onDelete() {
                   v-model="form.platforms.blog.blog_post"
                   :options="[{ label: 'Select a blog post…', value: '' }, ...(blogPostsResource.data || []).map((b) => ({ label: b.title + (b.published ? ' (published)' : ' (draft)'), value: b.name }))]"
                 />
-                <p class="m-0 text-[11px] text-ink-gray-5">
+                <p class="m-0 text-[11px] text-ink-gray-6">
                   Only blog posts already written in the Blog app show up here — this schedules it, it doesn't write it.
                 </p>
               </div>
@@ -711,7 +695,7 @@ async function onDelete() {
                 :rows="3"
                 placeholder="Write your post copy…"
               />
-              <p v-if="p.id === 'instagram' && instagramMentions.length" class="m-0 mt-1 text-[11px] text-ink-gray-5">
+              <p v-if="p.id === 'instagram' && instagramMentions.length" class="m-0 mt-1 text-[11px] text-ink-gray-6">
                 Will tag: <span v-for="(m, i) in instagramMentions" :key="m" class="font-medium text-gray-700">@{{ m }}<template v-if="i < instagramMentions.length - 1">, </template></span>
               </p>
 
@@ -730,11 +714,11 @@ async function onDelete() {
               <!-- Instagram-specific -->
               <div v-if="p.id === 'instagram'" class="mt-2.5 flex flex-col gap-2.5">
                 <div class="flex flex-col gap-1">
-                  <label class="text-[11px] font-medium text-gray-600">First comment <span class="text-ink-gray-5">(hide hashtags here instead)</span></label>
+                  <label class="text-[11px] font-medium text-gray-600">First comment <span class="text-ink-gray-6">(hide hashtags here instead)</span></label>
                   <TextInput v-model="form.platforms.instagram.instagram_first_comment" placeholder="#marketing #launch…" />
                 </div>
                 <div class="flex flex-col gap-1">
-                  <label class="text-[11px] font-medium text-gray-600">Collaborators <span class="text-ink-gray-5">· up to 2, comma-separated — they'll need to accept the invite</span></label>
+                  <label class="text-[11px] font-medium text-gray-600">Collaborators <span class="text-ink-gray-6">· up to 2, comma-separated — they'll need to accept the invite</span></label>
                   <TextInput v-model="form.platforms.instagram.instagram_collaborators" placeholder="username1, username2" />
                 </div>
               </div>
@@ -742,7 +726,7 @@ async function onDelete() {
               <!-- LinkedIn-specific -->
               <div v-if="p.id === 'linkedin'" class="mt-2.5 flex flex-col gap-1.5">
                 <label class="text-[11px] font-medium text-gray-600">
-                  Tag people <span class="text-ink-gray-5">· LinkedIn needs their exact member URN, not just a name — paste both, the name must appear in your caption above</span>
+                  Tag people <span class="text-ink-gray-6">· LinkedIn needs their exact member URN, not just a name — paste both, the name must appear in your caption above</span>
                 </label>
                 <div v-for="(m, i) in form.platforms.linkedin.linkedin_mentions" :key="i" class="flex items-center gap-1.5">
                   <TextInput v-model="m.name" placeholder="Name as it appears in the caption" class="flex-1" />
@@ -752,7 +736,7 @@ async function onDelete() {
                   </button>
                 </div>
                 <button
-                  class="flex items-center gap-1 self-start text-[11.5px] font-medium text-ink-gray-5 hover:text-gray-700"
+                  class="flex items-center gap-1 self-start text-[11.5px] font-medium text-ink-gray-6 hover:text-gray-700"
                   @click="form.platforms.linkedin.linkedin_mentions.push({ name: '', urn: '' })"
                 >
                   <LucidePlus class="h-3 w-3" /> Tag someone
@@ -765,7 +749,7 @@ async function onDelete() {
                   <label class="text-[11px] font-medium text-gray-600">Link / URL</label>
                   <TextInput v-model="form.platforms[p.id].link_url" placeholder="https://…" />
                 </div>
-                <button class="mt-1 flex items-center gap-1 text-[11.5px] font-medium text-ink-gray-5 hover:text-gray-700" @click="form.platforms[p.id].showLink = !form.platforms[p.id].showLink">
+                <button class="mt-1 flex items-center gap-1 text-[11.5px] font-medium text-ink-gray-6 hover:text-gray-700" @click="form.platforms[p.id].showLink = !form.platforms[p.id].showLink">
                   <LucideMinus v-if="form.platforms[p.id].showLink" class="h-3 w-3" />
                   <LucidePlus v-else class="h-3 w-3" />
                   {{ form.platforms[p.id].showLink ? 'Remove link' : 'Add a link / URL' }}
@@ -800,7 +784,7 @@ async function onDelete() {
               />
             </div>
             <div class="flex flex-col gap-1.5">
-              <label class="text-[12px] font-medium text-gray-700">Reviewer <span class="text-ink-gray-5">· optional</span></label>
+              <label class="text-[12px] font-medium text-gray-700">Reviewer <span class="text-ink-gray-6">· optional</span></label>
               <FormControl
                 type="select"
                 v-model="form.reviewer"
@@ -818,7 +802,7 @@ async function onDelete() {
             <div class="flex flex-col gap-3 rounded-xl border border-gray-100 p-3.5">
               <div class="flex flex-wrap gap-1.5">
                 <PlatformBadge v-for="p in selectedPlatforms" :key="p.id" :platform="p" />
-                <span v-if="!selectedPlatforms.length" class="text-[12px] text-ink-gray-5">No platforms picked yet.</span>
+                <span v-if="!selectedPlatforms.length" class="text-[12px] text-ink-gray-6">No platforms picked yet.</span>
               </div>
               <div>
                 <span class="text-[11px] font-medium text-gray-500">Title</span>
@@ -843,7 +827,7 @@ async function onDelete() {
               </div>
             </div>
 
-            <div v-if="!livePost.name" class="text-[12px] text-ink-gray-5">Save this as a draft first — workflow and publish actions appear here once it exists.</div>
+            <div v-if="!livePost.name" class="text-[12px] text-ink-gray-6">Save this as a draft first — workflow and publish actions appear here once it exists.</div>
             <div v-else class="flex flex-col gap-2.5">
               <div v-if="otherTransitions.length" class="flex flex-wrap items-center gap-2">
                 <Button
@@ -881,7 +865,7 @@ async function onDelete() {
                   >
                 </div>
               </div>
-              <p v-if="!otherTransitions.length && !timingTransitions.length && !canPublishNow" class="m-0 text-[12px] text-ink-gray-5">
+              <p v-if="!otherTransitions.length && !timingTransitions.length && !canPublishNow" class="m-0 text-[12px] text-ink-gray-6">
                 Nothing pending — this post has no further workflow actions right now.
               </p>
 
@@ -891,7 +875,7 @@ async function onDelete() {
                   <div v-for="c in commentsResource.data" :key="c.name" class="rounded-lg bg-surface-gray-1 px-2.5 py-2">
                     <div class="flex items-center gap-1.5">
                       <span class="text-[11.5px] font-semibold text-gray-700">{{ c.comment_by }}</span>
-                      <span class="text-[10.5px] text-ink-gray-5">{{ new Date(c.creation).toLocaleString() }}</span>
+                      <span class="text-[10.5px] text-ink-gray-6">{{ new Date(c.creation).toLocaleString() }}</span>
                     </div>
                     <p class="m-0 mt-0.5 whitespace-pre-line text-[12px] text-gray-600">{{ c.content }}</p>
                   </div>
@@ -907,7 +891,7 @@ async function onDelete() {
       </div>
 
       <div class="flex items-center gap-2.5 border-t border-gray-100 px-6 py-3.5">
-        <span class="text-[11.5px]" :class="errorMessage ? 'font-semibold text-red-600' : 'text-ink-gray-5'">
+        <span class="text-[11.5px]" :class="errorMessage ? 'font-semibold text-red-600' : 'text-ink-gray-6'">
           {{
             errorMessage ||
             (isReadOnly
@@ -921,9 +905,8 @@ async function onDelete() {
           v-if="livePost.name"
           variant="outline"
           :loading="deleting"
-          :class="deleteArmed ? 'border-red-300 !text-red-600' : '!text-red-500'"
-          @click="onDeleteClick"
-          >{{ deleteArmed ? 'Confirm delete?' : 'Delete post' }}</Button
+          @click="onDelete"
+          >Delete post</Button
         >
         <div class="ml-auto flex gap-2">
           <Button variant="outline" @click="emit('close')">Close</Button>

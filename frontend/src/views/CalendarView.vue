@@ -56,6 +56,7 @@ const weekDays = computed(() => (view.value === 'week' ? buildWeek(cursor, posts
 
 const rangeLabel = computed(() => {
   if (view.value === 'month') return `${MONTH_NAMES[cursor.m]} ${cursor.y}`
+  if (view.value === 'day') return `${MONTH_NAMES[cursor.m]} ${cursor.d}, ${cursor.y}`
   return weekRangeLabel(buildWeek(cursor, postsByDay.value))
 })
 
@@ -67,12 +68,24 @@ const selectedDay = computed(() => {
 
 const legend = computed(() =>
   colorBy.value === 'platform'
-    ? PLATFORM_LIST.map((p) => ({ label: p.name, color: p.color }))
-    : (team.data || []).map((m) => ({ label: m.name.split(' ')[0], color: m.color })),
+    ? PLATFORM_LIST.map((p) => ({ label: p.name, color: p.color, platform: p }))
+    : (team.data || []).map((m) => ({ label: m.name.split(' ')[0], color: m.color, platform: null })),
 )
 
+const dayPosts = computed(() => {
+  if (view.value !== 'day') return []
+  const key = isoDate(cursor.y, cursor.m, cursor.d)
+  return postsByDay.value.get(key) || []
+})
+
+const dayLabel = computed(() => {
+  const WEEKDAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+  const wd = WEEKDAY_NAMES[new Date(cursor.y, cursor.m, cursor.d).getDay()]
+  return `${wd}, ${MONTH_NAMES[cursor.m]} ${cursor.d}, ${cursor.y}`
+})
+
 function refresh() {
-  let startY = cursor.y, startM = cursor.m, startD = 1, endY = cursor.y, endM = cursor.m, endD = 28
+  let startY = cursor.y, startM = cursor.m, startD = cursor.d, endY = cursor.y, endM = cursor.m, endD = cursor.d
   if (view.value === 'month') {
     const first = new Date(cursor.y, cursor.m, 1)
     const dow = (first.getDay() + 6) % 7
@@ -81,7 +94,7 @@ function refresh() {
     end.setDate(start.getDate() + 41)
     startY = start.getFullYear(); startM = start.getMonth(); startD = start.getDate()
     endY = end.getFullYear(); endM = end.getMonth(); endD = end.getDate()
-  } else {
+  } else if (view.value === 'week') {
     const base = new Date(cursor.y, cursor.m, cursor.d)
     const dow = (base.getDay() + 6) % 7
     const start = new Date(base)
@@ -101,7 +114,10 @@ watch([() => cursor.y, () => cursor.m, () => cursor.d, view, filterValue], refre
 onMounted(refresh)
 
 function goPrev() {
-  if (view.value === 'week') {
+  if (view.value === 'day') {
+    const dt = new Date(cursor.y, cursor.m, cursor.d - 1)
+    Object.assign(cursor, { y: dt.getFullYear(), m: dt.getMonth(), d: dt.getDate() })
+  } else if (view.value === 'week') {
     const dt = new Date(cursor.y, cursor.m, cursor.d - 7)
     Object.assign(cursor, { y: dt.getFullYear(), m: dt.getMonth(), d: dt.getDate() })
   } else {
@@ -110,7 +126,10 @@ function goPrev() {
   }
 }
 function goNext() {
-  if (view.value === 'week') {
+  if (view.value === 'day') {
+    const dt = new Date(cursor.y, cursor.m, cursor.d + 1)
+    Object.assign(cursor, { y: dt.getFullYear(), m: dt.getMonth(), d: dt.getDate() })
+  } else if (view.value === 'week') {
     const dt = new Date(cursor.y, cursor.m, cursor.d + 7)
     Object.assign(cursor, { y: dt.getFullYear(), m: dt.getMonth(), d: dt.getDate() })
   } else {
@@ -168,7 +187,7 @@ function onPillLeave() {
   <header class="flex items-center gap-3.5 border-b border-gray-100 bg-white px-6 pb-3.5 pt-4">
     <div class="flex flex-col gap-0.5">
       <h1 class="m-0 text-[17px] font-semibold">Content Calendar</h1>
-      <span class="text-[12px] text-ink-gray-5">Plan & schedule posts across platforms</span>
+      <span class="text-[12px] text-ink-gray-6">Plan & schedule posts across platforms</span>
     </div>
     <Button variant="solid" class="ml-auto" @click="openCompose(null)">
       <template #prefix><LucidePlus class="h-3.5 w-3.5" /></template>
@@ -227,18 +246,18 @@ function onPillLeave() {
       </Popover>
 
       <div class="flex items-center gap-2">
-        <span class="text-[11.5px] font-medium text-ink-gray-5">Color by</span>
+        <span class="text-[11.5px] font-medium text-ink-gray-6">Color by</span>
         <div class="flex rounded-lg bg-gray-100 p-0.5">
           <button
             class="rounded-md px-2.5 py-1 text-[12px] font-semibold"
-            :class="colorBy === 'platform' ? 'bg-white shadow-sm' : 'text-ink-gray-5'"
+            :class="colorBy === 'platform' ? 'bg-white shadow-sm' : 'text-ink-gray-6'"
             @click="colorBy = 'platform'"
           >
             Platform
           </button>
           <button
             class="rounded-md px-2.5 py-1 text-[12px] font-semibold"
-            :class="colorBy === 'member' ? 'bg-white shadow-sm' : 'text-ink-gray-5'"
+            :class="colorBy === 'member' ? 'bg-white shadow-sm' : 'text-ink-gray-6'"
             @click="colorBy = 'member'"
           >
             Member
@@ -248,24 +267,25 @@ function onPillLeave() {
       <div class="flex rounded-lg bg-gray-100 p-0.5">
         <button
           class="rounded-md px-3 py-1 text-[12px] font-semibold"
-          :class="view === 'month' ? 'bg-white shadow-sm' : 'text-ink-gray-5'"
+          :class="view === 'month' ? 'bg-white shadow-sm' : 'text-ink-gray-6'"
           @click="view = 'month'"
-        >
-          Month
-        </button>
+        >Month</button>
         <button
           class="rounded-md px-3 py-1 text-[12px] font-semibold"
-          :class="view === 'week' ? 'bg-white shadow-sm' : 'text-ink-gray-5'"
+          :class="view === 'week' ? 'bg-white shadow-sm' : 'text-ink-gray-6'"
           @click="view = 'week'"
-        >
-          Week
-        </button>
+        >Week</button>
+        <button
+          class="rounded-md px-3 py-1 text-[12px] font-semibold"
+          :class="view === 'day' ? 'bg-white shadow-sm' : 'text-ink-gray-6'"
+          @click="view = 'day'"
+        >Day</button>
       </div>
     </div>
   </div>
 
   <div class="flex items-center gap-4.5 border-b border-gray-100 bg-surface-gray-1 px-6 py-2.5">
-    <span class="text-[11px] font-medium uppercase tracking-wide text-ink-gray-5">
+    <span class="text-[11px] font-medium uppercase tracking-wide text-ink-gray-6">
       {{ colorBy === 'platform' ? 'Platforms' : 'Team' }}
     </span>
     <div class="flex flex-wrap items-center gap-4">
@@ -276,7 +296,10 @@ function onPillLeave() {
         :class="colorBy === 'platform' ? 'cursor-pointer' : 'cursor-default'"
         @click="colorBy === 'platform' && togglePlatformFilter(l.label)"
       >
-        <span class="h-2 w-2 rounded-sm" :style="{ background: l.color }" />
+        <PlatformBadge v-if="l.platform" :platform="l.platform" variant="icon"
+          :class="colorBy === 'platform' && filterValue.platform === l.label ? 'text-gray-900' : 'text-gray-500'"
+        />
+        <span v-else class="h-2 w-2 rounded-full" :style="{ background: l.color }" />
         <span
           class="text-[12px] font-medium"
           :class="colorBy === 'platform' && filterValue.platform === l.label ? 'text-gray-900' : 'text-gray-600'"
@@ -290,7 +313,7 @@ function onPillLeave() {
     <!-- MONTH VIEW -->
     <div v-if="view === 'month'">
       <div class="sticky top-0 z-[5] grid grid-cols-7 border-b border-gray-100 bg-white">
-        <div v-for="wd in WEEKDAYS" :key="wd" class="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-ink-gray-5">
+        <div v-for="wd in WEEKDAYS" :key="wd" class="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-ink-gray-6">
           {{ wd }}
         </div>
       </div>
@@ -320,14 +343,14 @@ function onPillLeave() {
               @enter="onPillEnter"
               @leave="onPillLeave"
             />
-            <span v-if="day.hasMore" class="pl-1 text-[10.5px] font-semibold text-ink-gray-5">+{{ day.more }} more</span>
+            <span v-if="day.hasMore" class="pl-1 text-[10.5px] font-semibold text-ink-gray-6">+{{ day.more }} more</span>
           </div>
         </div>
       </div>
     </div>
 
     <!-- WEEK VIEW -->
-    <div v-else class="grid min-h-full grid-cols-7">
+    <div v-else-if="view === 'week'" class="grid min-h-full grid-cols-7">
       <div
         v-for="day in weekDays"
         :key="day.iso"
@@ -336,7 +359,7 @@ function onPillLeave() {
         @click="openDay(day)"
       >
         <div class="sticky top-0 flex flex-col gap-0.5 border-b border-gray-100 bg-inherit px-3 py-2.5">
-          <span class="text-[10.5px] font-semibold uppercase tracking-wide text-ink-gray-5">{{ day.weekday }}</span>
+          <span class="text-[10.5px] font-semibold uppercase tracking-wide text-ink-gray-6">{{ day.weekday }}</span>
           <span class="text-[18px] font-semibold" :class="day.today ? 'text-gray-900' : ''">{{ day.d }}</span>
         </div>
         <div class="flex flex-1 flex-col gap-1.5 p-2">
@@ -359,6 +382,72 @@ function onPillLeave() {
               >{{ post.status }}</span
             >
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY VIEW -->
+    <div v-else-if="view === 'day'" class="mx-auto max-w-[760px] px-6 py-5">
+      <div class="mb-4 flex items-center justify-between">
+        <div>
+          <h3 class="m-0 text-[16px] font-semibold">{{ dayLabel }}</h3>
+          <span class="text-[12px] text-ink-gray-6">
+            {{ dayPosts.length ? `${dayPosts.length} post${dayPosts.length > 1 ? 's' : ''} scheduled` : 'Nothing scheduled' }}
+          </span>
+        </div>
+        <Button variant="solid" size="sm" @click="openCompose(isoDate(cursor.y, cursor.m, cursor.d))">
+          <template #prefix><LucidePlus class="h-3.5 w-3.5" /></template>
+          Add post
+        </Button>
+      </div>
+
+      <div v-if="dayPosts.length" class="flex flex-col gap-3">
+        <div
+          v-for="post in dayPosts"
+          :key="post.name"
+          class="flex cursor-pointer items-start gap-4 rounded-xl border border-gray-100 bg-white p-4 shadow-sm hover:border-gray-200"
+          @click="openPostDetail(post)"
+        >
+          <!-- Time column -->
+          <div class="w-14 shrink-0 text-right">
+            <span class="text-[12px] font-semibold text-gray-700">{{ fmtTime(post._dt?.time) }}</span>
+          </div>
+          <!-- Colour bar -->
+          <div class="mt-1 h-full w-1 shrink-0 self-stretch rounded-full" :style="{ background: pillColors(post, colorBy).bar }" />
+          <!-- Content -->
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-2">
+              <span class="truncate text-[14px] font-semibold text-gray-900">{{ post.title }}</span>
+              <span
+                class="ml-auto shrink-0 rounded-full px-2 py-0.5 text-[10.5px] font-semibold"
+                :style="{ color: post.statusMeta.c, background: post.statusMeta.bg }"
+              >{{ post.status }}</span>
+            </div>
+            <div v-if="post.platforms?.[0]?.caption" class="mt-0.5 truncate text-[12px] text-ink-gray-6">
+              {{ post.platforms[0].caption }}
+            </div>
+            <div class="mt-2 flex items-center gap-2">
+              <button
+                v-for="p in post.platforms"
+                :key="p.platform"
+                class="text-gray-500 hover:text-gray-800"
+                @click.stop="filterValue.platform = p.platform"
+              >
+                <PlatformBadge :platform="p.meta" variant="icon" />
+              </button>
+              <span class="ml-auto text-[11px] text-ink-gray-6">{{ memberById(post.assigned_to).name }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div v-else class="flex flex-col items-center gap-3 py-16 text-center">
+        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100">
+          <LucideCalendarDays class="h-6 w-6 text-gray-400" />
+        </div>
+        <div>
+          <p class="m-0 text-[13px] font-medium text-gray-700">Nothing scheduled</p>
+          <p class="m-0 mt-1 text-[12px] text-ink-gray-6">This day is clear — add a post to get started.</p>
         </div>
       </div>
     </div>

@@ -62,7 +62,7 @@ const saving = computed(() => settings.save.loading)
   <header class="flex items-center gap-3.5 border-b border-gray-100 bg-white px-6 pb-3.5 pt-4">
     <div class="flex flex-col gap-0.5">
       <h1 class="m-0 text-[17px] font-semibold">Settings</h1>
-      <span class="text-[12px] text-ink-gray-5">App credentials and connected accounts</span>
+      <span class="text-[12px] text-ink-gray-6">App credentials and connected accounts</span>
     </div>
     <span v-if="savedNotice" class="text-[12px] font-medium text-green-600">Saved</span>
     <span v-if="saveError" class="text-[12px] font-medium text-red-600">{{ saveError }}</span>
@@ -75,7 +75,7 @@ const saving = computed(() => settings.save.loading)
       <!-- LinkedIn -->
       <div class="flex flex-col gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
         <div class="flex items-center gap-2">
-          <PlatformBadge :platform="PLATFORMS.linkedin" />
+          <PlatformBadge :platform="PLATFORMS.linkedin" variant="badge" size="md" />
           <span
             v-if="!accountsForPlatform('LinkedIn').length"
             class="ml-auto rounded-full bg-gray-100 px-2 py-0.5 text-[10.5px] font-semibold text-gray-500"
@@ -92,10 +92,10 @@ const saving = computed(() => settings.save.loading)
           <PasswordField v-model="settings.doc.linkedin_client_secret" placeholder="•••••••••" />
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-[11px] font-medium text-gray-600">Redirect URI <span class="text-ink-gray-5">· register this in the LinkedIn app</span></label>
+          <label class="text-[11px] font-medium text-gray-600">Redirect URI <span class="text-ink-gray-6">· register this in the LinkedIn app</span></label>
           <CopyableField :model-value="settings.doc.linkedin_redirect_uri" />
         </div>
-        <p class="m-0 text-[11px] leading-relaxed text-ink-gray-5">
+        <p class="m-0 text-[11px] leading-relaxed text-ink-gray-6">
           Create a LinkedIn app with <b>Share on LinkedIn</b> + <b>Sign In with LinkedIn using OpenID Connect</b>, add the Redirect URI above under OAuth 2.0 settings, request
           <code>openid</code>, <code>profile</code>, <code>w_member_social</code>.
         </p>
@@ -107,7 +107,7 @@ const saving = computed(() => settings.save.loading)
               <span class="ml-auto rounded-full px-1.5 py-0.5 text-[9.5px] font-semibold" :class="acc.status === 'Connected' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'">{{ acc.status || 'Unknown' }}</span>
             </div>
             <span v-if="acc.last_error" class="truncate text-[10.5px] text-red-500">{{ acc.last_error }}</span>
-            <span v-else-if="acc.token_expires_on" class="text-[10.5px] text-ink-gray-5">Token expires {{ fmtDate(acc.token_expires_on) }}</span>
+            <span v-else-if="acc.token_expires_on" class="text-[10.5px] text-ink-gray-6">Token expires {{ fmtDate(acc.token_expires_on) }}</span>
           </div>
         </div>
         <Button class="w-full justify-center" variant="outline" @click="onConnectClick('LinkedIn')">
@@ -118,7 +118,7 @@ const saving = computed(() => settings.save.loading)
       <!-- X -->
       <div class="flex flex-col gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
         <div class="flex items-center gap-2">
-          <PlatformBadge :platform="PLATFORMS.x" />
+          <PlatformBadge :platform="PLATFORMS.x" variant="badge" size="md" />
           <span
             v-if="!accountsForPlatform('X').length"
             class="ml-auto rounded-full bg-gray-100 px-2 py-0.5 text-[10.5px] font-semibold text-gray-500"
@@ -135,10 +135,10 @@ const saving = computed(() => settings.save.loading)
           <PasswordField v-model="settings.doc.x_client_secret" placeholder="•••••••••" />
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-[11px] font-medium text-gray-600">Redirect URI <span class="text-ink-gray-5">· register this in the X app</span></label>
+          <label class="text-[11px] font-medium text-gray-600">Redirect URI <span class="text-ink-gray-6">· register this in the X app</span></label>
           <CopyableField :model-value="settings.doc.x_redirect_uri" />
         </div>
-        <p class="m-0 text-[11px] leading-relaxed text-ink-gray-5">
+        <p class="m-0 text-[11px] leading-relaxed text-ink-gray-6">
           Create an X app with OAuth 2.0 (PKCE) enabled, add the Redirect URI above, request <code>tweet.read</code>, <code>tweet.write</code>, <code>users.read</code>,
           <code>offline.access</code>. Posting needs at least the Free API tier with write access.
         </p>
@@ -150,7 +150,7 @@ const saving = computed(() => settings.save.loading)
               <span class="ml-auto rounded-full px-1.5 py-0.5 text-[9.5px] font-semibold" :class="acc.status === 'Connected' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'">{{ acc.status || 'Unknown' }}</span>
             </div>
             <span v-if="acc.last_error" class="truncate text-[10.5px] text-red-500">{{ acc.last_error }}</span>
-            <span v-else-if="acc.token_expires_on" class="text-[10.5px] text-ink-gray-5">Token expires {{ fmtDate(acc.token_expires_on) }}</span>
+            <span v-else-if="acc.token_expires_on" class="text-[10.5px] text-ink-gray-6">Token expires {{ fmtDate(acc.token_expires_on) }}</span>
           </div>
         </div>
         <Button class="w-full justify-center" variant="outline" @click="onConnectClick('X')">
@@ -161,7 +161,7 @@ const saving = computed(() => settings.save.loading)
       <!-- Instagram (Meta) -->
       <div class="flex flex-col gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
         <div class="flex items-center gap-2">
-          <PlatformBadge :platform="PLATFORMS.instagram" />
+          <PlatformBadge :platform="PLATFORMS.instagram" variant="badge" size="md" />
           <span
             v-if="!accountsForPlatform('Instagram').length"
             class="ml-auto rounded-full bg-gray-100 px-2 py-0.5 text-[10.5px] font-semibold text-gray-500"
@@ -178,18 +178,18 @@ const saving = computed(() => settings.save.loading)
           <PasswordField v-model="settings.doc.meta_app_secret" placeholder="•••••••••" />
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-[11px] font-medium text-gray-600">Redirect URI <span class="text-ink-gray-5">· OAuth login step</span></label>
+          <label class="text-[11px] font-medium text-gray-600">Redirect URI <span class="text-ink-gray-6">· OAuth login step</span></label>
           <CopyableField :model-value="settings.doc.meta_redirect_uri" />
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-[11px] font-medium text-gray-600">Webhook Callback URL <span class="text-ink-gray-5">· separate "Configure webhooks" step</span></label>
+          <label class="text-[11px] font-medium text-gray-600">Webhook Callback URL <span class="text-ink-gray-6">· separate "Configure webhooks" step</span></label>
           <CopyableField :model-value="settings.doc.meta_webhook_url" />
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-[11px] font-medium text-gray-600">Webhook Verify Token <span class="text-ink-gray-5">· must match Meta's "Verify token" field</span></label>
+          <label class="text-[11px] font-medium text-gray-600">Webhook Verify Token <span class="text-ink-gray-6">· must match Meta's "Verify token" field</span></label>
           <TextInput v-model="settings.doc.meta_webhook_verify_token" placeholder="any value, just match it on Meta's side" />
         </div>
-        <p class="m-0 text-[11px] leading-relaxed text-ink-gray-5">
+        <p class="m-0 text-[11px] leading-relaxed text-ink-gray-6">
           Create a Meta App with the <b>Instagram</b> product (direct Instagram Login, no Facebook Page needed), add the Redirect URI above, request
           <code>instagram_business_basic</code>, <code>instagram_business_content_publish</code>. The account must be an Instagram Business/Creator account.
         </p>
@@ -201,7 +201,7 @@ const saving = computed(() => settings.save.loading)
               <span class="ml-auto rounded-full px-1.5 py-0.5 text-[9.5px] font-semibold" :class="acc.status === 'Connected' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'">{{ acc.status || 'Unknown' }}</span>
             </div>
             <span v-if="acc.last_error" class="truncate text-[10.5px] text-red-500">{{ acc.last_error }}</span>
-            <span v-else-if="acc.token_expires_on" class="text-[10.5px] text-ink-gray-5">Token expires {{ fmtDate(acc.token_expires_on) }}</span>
+            <span v-else-if="acc.token_expires_on" class="text-[10.5px] text-ink-gray-6">Token expires {{ fmtDate(acc.token_expires_on) }}</span>
           </div>
         </div>
         <Button class="w-full justify-center" variant="outline" @click="onConnectClick('Instagram')">
@@ -212,10 +212,10 @@ const saving = computed(() => settings.save.loading)
       <!-- Blog -->
       <div class="flex flex-col gap-2 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
         <div class="flex items-center gap-2">
-          <PlatformBadge :platform="PLATFORMS.blog" />
+          <PlatformBadge :platform="PLATFORMS.blog" variant="badge" size="md" />
           <span class="ml-auto rounded-full bg-green-100 px-2 py-0.5 text-[10.5px] font-semibold text-green-700">No setup needed</span>
         </div>
-        <p class="m-0 text-[11.5px] text-ink-gray-5">
+        <p class="m-0 text-[11.5px] text-ink-gray-6">
           Blog posts live in this same site's Blog app — there's nothing to connect. Write the post there, then pick it from the dropdown when composing.
         </p>
       </div>

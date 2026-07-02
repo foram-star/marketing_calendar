@@ -33,7 +33,7 @@ const subtitle = computed(() => {
         <div class="flex flex-col gap-0.5">
           <span class="text-[11.5px] font-semibold uppercase tracking-wide text-gray-500">{{ weekdayLabel }}</span>
           <h3 class="m-0 text-[19px] font-semibold">{{ dateLabel }}</h3>
-          <span class="text-[12px] text-ink-gray-5">{{ subtitle }}</span>
+          <span class="text-[12px] text-ink-gray-6">{{ subtitle }}</span>
         </div>
         <Button variant="ghost" class="ml-auto" icon="x" @click="emit('close')" />
       </div>
@@ -58,7 +58,7 @@ const subtitle = computed(() => {
             </div>
           </div>
           <span class="text-[13.5px] font-semibold leading-snug">{{ post.title }}</span>
-          <span v-if="post.platforms?.[0]?.caption" class="truncate text-[12px] leading-relaxed text-ink-gray-5">{{ post.platforms[0].caption }}</span>
+          <span v-if="post.platforms?.[0]?.caption" class="truncate text-[12px] leading-relaxed text-ink-gray-6">{{ post.platforms[0].caption }}</span>
           <div class="flex items-center gap-1.5 border-t border-gray-100 pt-1.5">
             <Avatar :label="memberById(post.assigned_to).name" size="sm" />
             <span class="text-[11.5px] font-medium text-gray-600">{{ memberById(post.assigned_to).name }}</span>
@@ -71,7 +71,7 @@ const subtitle = computed(() => {
           </div>
           <div class="flex flex-col gap-1">
             <span class="text-[14px] font-semibold text-gray-700">No posts scheduled</span>
-            <span class="max-w-[220px] text-[12.5px] leading-relaxed text-ink-gray-5">
+            <span class="max-w-[220px] text-[12.5px] leading-relaxed text-ink-gray-6">
               This day's wide open. Add your first post and it'll show up right here.
             </span>
           </div>

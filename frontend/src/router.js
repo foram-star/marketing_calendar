@@ -1,6 +1,19 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { checkAuth, isGuest } from '@/composables/useAuth'
 
 const routes = [
+  {
+    path: '/marketing/login',
+    name: 'Login',
+    component: () => import('@/views/LoginView.vue'),
+    meta: { public: true },
+  },
+  {
+    path: '/marketing/signup',
+    name: 'Signup',
+    component: () => import('@/views/SignupView.vue'),
+    meta: { public: true },
+  },
   {
     path: '/marketing',
     component: () => import('@/layouts/AppLayout.vue'),
@@ -21,6 +34,23 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+})
+
+let authChecked = false
+
+router.beforeEach(async (to) => {
+  if (to.meta?.public) return true
+
+  if (!authChecked) {
+    await checkAuth()
+    authChecked = true
+  }
+
+  if (isGuest.value) {
+    return { name: 'Login', query: { next: to.fullPath } }
+  }
+
+  return true
 })
 
 export default router
