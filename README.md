@@ -1,4 +1,4 @@
-# Marketing Calendar
+# Feed
 
 A [Frappe](https://github.com/frappe/frappe) app for planning, scheduling, and publishing marketing content across multiple platforms from a single calendar view.
 
