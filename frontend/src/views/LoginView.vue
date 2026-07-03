@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { Button, TextInput } from 'frappe-ui'
-import LucideSend from '~icons/lucide/send'
+import FeedLogo from '@/components/FeedLogo.vue'
 import { login, isGuest } from '@/composables/useAuth'
 
 const router = useRouter()
@@ -35,9 +35,7 @@ async function onSubmit() {
     <div class="w-full max-w-[360px]">
       <!-- Logo -->
       <div class="mb-8 flex flex-col items-center gap-3">
-        <div class="flex h-10 w-10 items-center justify-center rounded-xl text-white" style="background:#8B7CF8">
-          <LucideSend class="h-6 w-6" />
-        </div>
+        <FeedLogo class="h-12 w-12 rounded-xl" />
         <div class="text-center">
           <h1 class="m-0 text-[20px] font-semibold text-gray-900">Feed</h1>
           <p class="m-0 mt-1 text-[13px] text-ink-gray-6">Sign in to your account</p>

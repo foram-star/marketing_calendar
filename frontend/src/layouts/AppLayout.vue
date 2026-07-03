@@ -9,7 +9,7 @@ import LucideFolderKanban from '~icons/lucide/folder-kanban'
 import LucideImages from '~icons/lucide/images'
 import LucideBarChart3 from '~icons/lucide/bar-chart-3'
 import LucideSettings from '~icons/lucide/settings'
-import LucideSend from '~icons/lucide/send'
+import FeedLogo from '@/components/FeedLogo.vue'
 import LucideBell from '~icons/lucide/bell'
 import LucideLogOut from '~icons/lucide/log-out'
 import LucideExternalLink from '~icons/lucide/external-link'
@@ -111,9 +111,7 @@ async function handleLogout() {
 
       <!-- App logo -->
       <div class="flex items-center gap-2.5 px-2 pb-3.5 pt-1.5">
-        <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-white" style="background:#8B7CF8">
-          <LucideSend class="h-4 w-4" />
-        </div>
+        <FeedLogo class="h-7 w-7 shrink-0 rounded-lg" />
         <span class="text-[13.5px] font-semibold">Feed</span>
       </div>
 

@@ -12,6 +12,7 @@ declare module 'vue' {
     ComposePanel: typeof import('./src/components/ComposePanel.vue')['default']
     CopyableField: typeof import('./src/components/CopyableField.vue')['default']
     DayPanel: typeof import('./src/components/DayPanel.vue')['default']
+    FeedLogo: typeof import('./src/components/FeedLogo.vue')['default']
     IconBlog: typeof import('./src/components/icons/IconBlog.vue')['default']
     IconInstagram: typeof import('./src/components/icons/IconInstagram.vue')['default']
     IconLinkedIn: typeof import('./src/components/icons/IconLinkedIn.vue')['default']
