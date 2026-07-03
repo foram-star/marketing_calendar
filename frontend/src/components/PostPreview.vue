@@ -102,7 +102,7 @@ function fmtCount(n) {
               <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-[13px] font-bold text-white" :style="{ background: avatarColor }">{{ initials }}</div>
               <div class="min-w-0 flex-1">
                 <div class="truncate text-[13.5px] font-semibold text-gray-900">{{ accountName }}</div>
-                <div class="truncate text-[11.5px] text-gray-500">Marketing • Posting via Marketing Calendar</div>
+                <div class="truncate text-[11.5px] text-gray-500">Marketing • Posting via Feed</div>
                 <div class="flex items-center gap-1 text-[11px] text-gray-400">
                   <span>2h</span>
                   <span>•</span>

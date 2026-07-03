@@ -1,5 +1,5 @@
 app_name = "marketing_calendar"
-app_title = "Marketing Calendar"
+app_title = "Feed"
 app_publisher = "Foram Shah"
 app_description = "Real-time marketing content calendar with multi-platform scheduling and publishing"
 app_email = "foram@frappe.io"
@@ -19,7 +19,7 @@ add_to_apps_screen = [
 	{
 		"name": "marketing_calendar",
 		"logo": "/assets/marketing_calendar/frontend/favicon.svg",
-		"title": "Marketing Calendar",
+		"title": "Feed",
 		"route": "/marketing",
 	}
 ]

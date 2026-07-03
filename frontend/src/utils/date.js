@@ -1,4 +1,4 @@
-// Date-grid helpers ported from the validated prototype (Marketing Calendar.dc.html) —
+// Date-grid helpers ported from the validated prototype (Feed.dc.html) —
 // the month/week building logic was already correct there, just re-targeted to
 // read from real `Marketing Post.scheduled_on` values instead of a static array.
 

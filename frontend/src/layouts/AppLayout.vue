@@ -8,7 +8,7 @@ import LucideFolderKanban from '~icons/lucide/folder-kanban'
 import LucideImages from '~icons/lucide/images'
 import LucideBarChart3 from '~icons/lucide/bar-chart-3'
 import LucideSettings from '~icons/lucide/settings'
-import LucideMegaphone from '~icons/lucide/megaphone'
+import LucideSend from '~icons/lucide/send'
 
 const route = useRoute()
 
@@ -35,10 +35,10 @@ const currentUser = computed(() => window.user || 'Administrator')
     <aside class="flex w-[236px] shrink-0 flex-col border-r border-gray-100 bg-white p-3">
       <div class="flex items-center gap-2.5 px-2 pb-3.5 pt-1.5">
         <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gray-800 text-white">
-          <LucideMegaphone class="h-4 w-4" />
+          <LucideSend class="h-4 w-4" />
         </div>
         <div class="flex flex-col leading-tight">
-          <span class="text-[13.5px] font-semibold">Marketing Calendar</span>
+          <span class="text-[13.5px] font-semibold">Feed</span>
         </div>
       </div>
 

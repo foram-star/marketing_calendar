@@ -30,7 +30,7 @@ After installation, navigate to `/marketing` on your Frappe site.
 
 ## Configuration
 
-Go to **Marketing Calendar Settings** (or `/marketing/settings`) and add credentials for each platform you want to use:
+Go to **Feed Settings** (or `/marketing/settings`) and add credentials for each platform you want to use:
 
 | Platform  | Credentials needed |
 |-----------|--------------------|
