@@ -27,7 +27,7 @@ import frappe
 import requests
 from frappe import _
 
-GRAPH_BASE = "https://graph.instagram.com/v21.0"
+GRAPH_BASE = "https://graph.instagram.com/v25.0"
 POLL_INTERVAL_SECONDS = 2
 POLL_MAX_ATTEMPTS = 30
 MAX_COLLABORATORS = 2  # Meta's own cap is 3 for images/Reels — ours is tighter, by request
@@ -92,7 +92,7 @@ def publish(post, platform_row):
 	access_token = account.get_password("access_token")
 	ig_user_id = account.external_account_id
 
-	assets = post.assets[:4]  # Instagram's own carousel cap
+	assets = post.assets[:10]  # Instagram carousel cap is 10
 	caption = platform_row.caption
 	collaborators = _collaborators(platform_row)
 
@@ -109,6 +109,8 @@ def publish(post, platform_row):
 				payload["cover_url"] = frappe.utils.get_url(asset.thumbnail)
 		else:
 			payload["image_url"] = file_url
+			if asset.alt_text:
+				payload["alt_text"] = asset.alt_text
 		container = _graph_call("POST", f"{ig_user_id}/media", data=payload)
 		container_id = container["id"]
 		_wait_until_finished(container_id, access_token)
@@ -124,6 +126,8 @@ def publish(post, platform_row):
 					item_payload["cover_url"] = frappe.utils.get_url(asset.thumbnail)
 			else:
 				item_payload["image_url"] = file_url
+				if asset.alt_text:
+					item_payload["alt_text"] = asset.alt_text
 			item = _graph_call("POST", f"{ig_user_id}/media", data=item_payload)
 			_wait_until_finished(item["id"], access_token)
 			child_ids.append(item["id"])
