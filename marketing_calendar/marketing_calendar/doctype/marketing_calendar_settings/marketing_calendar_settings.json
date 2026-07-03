@@ -45,14 +45,14 @@
    "read_only": 1
   },
   {
-   "description": "A separate URL from the Redirect URI above — this is for the \"Configure webhooks\" step in the Instagram product setup, not the OAuth login step.",
+   "description": "A separate URL from the Redirect URI above \u2014 this is for the \"Configure webhooks\" step in the Instagram product setup, not the OAuth login step.",
    "fieldname": "meta_webhook_url",
    "fieldtype": "Data",
    "label": "Webhook Callback URL (register this in the Webhooks step)",
    "read_only": 1
   },
   {
-   "description": "Type any value here, then paste the same value into Meta's \"Verify token\" field — they just need to match.",
+   "description": "Type any value here, then paste the same value into Meta's \"Verify token\" field \u2014 they just need to match.",
    "fieldname": "meta_webhook_verify_token",
    "fieldtype": "Data",
    "label": "Webhook Verify Token"
@@ -140,6 +140,10 @@
    "role": "Marketing Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Marketing User"
   }
  ],
  "sort_field": "creation",
