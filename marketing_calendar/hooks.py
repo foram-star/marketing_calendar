@@ -1,7 +1,7 @@
 app_name = "marketing_calendar"
 app_title = "Feed"
 app_publisher = "Foram Shah"
-app_description = "Real-time marketing content calendar with multi-platform scheduling and publishing"
+app_description = "Multi-platform content scheduling and publishing for marketing teams"
 app_email = "foram@frappe.io"
 app_license = "mit"
 

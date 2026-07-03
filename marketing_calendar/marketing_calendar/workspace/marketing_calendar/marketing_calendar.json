@@ -1,18 +1,18 @@
 {
  "app": "marketing_calendar",
  "charts": [],
- "content": "[{\"id\":\"mc01\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Open Marketing Calendar\",\"col\":4}},{\"id\":\"mc02\",\"type\":\"paragraph\",\"data\":{\"text\":\"Records\",\"col\":12}},{\"id\":\"mc03\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Marketing Posts\",\"col\":3}},{\"id\":\"mc04\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Marketing Projects\",\"col\":3}},{\"id\":\"mc06\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Marketing Tasks\",\"col\":3}},{\"id\":\"mc05\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Marketing Calendar Settings\",\"col\":3}}]",
+ "content": "[{\"id\":\"mc01\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Open Feed\",\"col\":4}},{\"id\":\"mc02\",\"type\":\"paragraph\",\"data\":{\"text\":\"Records\",\"col\":12}},{\"id\":\"mc03\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Marketing Posts\",\"col\":3}},{\"id\":\"mc04\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Marketing Projects\",\"col\":3}},{\"id\":\"mc06\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Marketing Tasks\",\"col\":3}},{\"id\":\"mc05\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Marketing Calendar Settings\",\"col\":3}}]",
  "creation": "2026-06-18 00:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
  "for_user": "",
  "hide_custom": 0,
- "icon": "calendar-days",
+ "icon": "send",
  "idx": 0,
- "indicator_color": "gray",
+ "indicator_color": "purple",
  "is_hidden": 0,
- "label": "Marketing Calendar",
+ "label": "Feed",
  "link_type": "DocType",
  "links": [],
  "modified": "2026-06-18 00:00:00.000000",
@@ -28,8 +28,8 @@
  "sequence_id": 24.0,
  "shortcuts": [
   {
-   "color": "Grey",
-   "label": "Open Marketing Calendar",
+   "color": "Purple",
+   "label": "Open Feed",
    "type": "URL",
    "url": "/marketing"
   },
@@ -66,6 +66,6 @@
    "type": "DocType"
   }
  ],
- "title": "Marketing Calendar",
+ "title": "Feed",
  "type": "Workspace"
 }
