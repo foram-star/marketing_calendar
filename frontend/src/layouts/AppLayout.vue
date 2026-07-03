@@ -111,8 +111,8 @@ async function handleLogout() {
 
       <!-- App logo -->
       <div class="flex items-center gap-2.5 px-2 pb-3.5 pt-1.5">
-        <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gray-800 text-white">
-          <LucideSend class="h-3.5 w-3.5 translate-x-[-1px] translate-y-[1px] rotate-[-30deg]" />
+        <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-white" style="background:#8B7CF8">
+          <LucideSend class="h-4 w-4" />
         </div>
         <span class="text-[13.5px] font-semibold">Feed</span>
       </div>
