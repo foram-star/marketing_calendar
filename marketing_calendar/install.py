@@ -58,6 +58,10 @@ def after_install():
 	create_workflow()
 
 
+def after_migrate():
+	frappe.clear_cache()
+
+
 def create_roles():
 	for role in ROLES:
 		if frappe.db.exists("Role", role):

@@ -4,6 +4,9 @@ import { Button, FormControl } from 'frappe-ui'
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
 import LucideChevronDown from '~icons/lucide/chevron-down'
 import LucideX from '~icons/lucide/x'
+import LucideCircle from '~icons/lucide/circle'
+import LucideMoreHorizontal from '~icons/lucide/more-horizontal'
+import LucideLayoutGrid from '~icons/lucide/layout-grid'
 import PostPill from '@/components/PostPill.vue'
 import DayPanel from '@/components/DayPanel.vue'
 import ComposePanel from '@/components/ComposePanel.vue'
@@ -264,22 +267,22 @@ function onPillLeave() {
           </button>
         </div>
       </div>
-      <div class="flex rounded-lg bg-gray-100 p-0.5">
+      <div class="flex items-center rounded-lg border border-gray-200 bg-gray-100 p-0.5">
         <button
-          class="rounded-md px-3 py-1 text-[12px] font-semibold"
-          :class="view === 'month' ? 'bg-white shadow-sm' : 'text-ink-gray-6'"
-          @click="view = 'month'"
-        >Month</button>
-        <button
-          class="rounded-md px-3 py-1 text-[12px] font-semibold"
-          :class="view === 'week' ? 'bg-white shadow-sm' : 'text-ink-gray-6'"
-          @click="view = 'week'"
-        >Week</button>
-        <button
-          class="rounded-md px-3 py-1 text-[12px] font-semibold"
-          :class="view === 'day' ? 'bg-white shadow-sm' : 'text-ink-gray-6'"
+          class="flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[12px] font-medium transition-colors"
+          :class="view === 'day' ? 'bg-white text-gray-900 shadow-sm' : 'text-ink-gray-6 hover:text-gray-700'"
           @click="view = 'day'"
-        >Day</button>
+        ><LucideCircle class="h-3 w-3" />Day</button>
+        <button
+          class="flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[12px] font-medium transition-colors"
+          :class="view === 'week' ? 'bg-white text-gray-900 shadow-sm' : 'text-ink-gray-6 hover:text-gray-700'"
+          @click="view = 'week'"
+        ><LucideMoreHorizontal class="h-3 w-3" />Week</button>
+        <button
+          class="flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[12px] font-medium transition-colors"
+          :class="view === 'month' ? 'bg-white text-gray-900 shadow-sm' : 'text-ink-gray-6 hover:text-gray-700'"
+          @click="view = 'month'"
+        ><LucideLayoutGrid class="h-3 w-3" />Month</button>
       </div>
     </div>
   </div>
@@ -292,19 +295,15 @@ function onPillLeave() {
       <button
         v-for="l in legend"
         :key="l.label"
-        class="flex items-center gap-1.5"
+        :title="l.label"
+        class="flex items-center"
         :class="colorBy === 'platform' ? 'cursor-pointer' : 'cursor-default'"
         @click="colorBy === 'platform' && togglePlatformFilter(l.label)"
       >
-        <PlatformBadge v-if="l.platform" :platform="l.platform" variant="icon"
-          :class="colorBy === 'platform' && filterValue.platform === l.label ? 'text-gray-900' : 'text-gray-500'"
+        <PlatformBadge v-if="l.platform" :platform="l.platform" variant="icon" size="md"
+          :class="colorBy === 'platform' && filterValue.platform === l.label ? 'text-gray-900' : 'text-gray-400'"
         />
-        <span v-else class="h-2 w-2 rounded-full" :style="{ background: l.color }" />
-        <span
-          class="text-[12px] font-medium"
-          :class="colorBy === 'platform' && filterValue.platform === l.label ? 'text-gray-900' : 'text-gray-600'"
-          >{{ l.label }}</span
-        >
+        <span v-else class="h-2.5 w-2.5 rounded-full" :style="{ background: l.color }" />
       </button>
     </div>
   </div>

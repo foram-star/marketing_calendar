@@ -97,6 +97,7 @@ website_route_rules = [
 # ------------
 
 after_install = "marketing_calendar.install.after_install"
+after_migrate = "marketing_calendar.install.after_migrate"
 
 # Uninstallation
 # ------------
