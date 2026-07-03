@@ -69,7 +69,19 @@ const saving = computed(() => settings.save.loading)
     <Button class="ml-auto" variant="solid" :loading="saving" @click="saveCredentials">Save credentials</Button>
   </header>
 
-  <div v-if="settings.doc" class="flex-1 overflow-auto p-6">
+  <!-- Loading -->
+  <div v-if="settings.get.loading" class="flex flex-1 items-center justify-center">
+    <span class="text-[13px] text-ink-gray-6">Loading settings…</span>
+  </div>
+
+  <!-- Error / not found -->
+  <div v-else-if="settings.get.error" class="flex flex-1 flex-col items-center justify-center gap-2 text-center">
+    <p class="m-0 text-[13px] font-medium text-gray-800">Could not load settings</p>
+    <p class="m-0 text-[12px] text-ink-gray-6">{{ settings.get.error.message || 'Check that you have System Manager or Marketing Manager role.' }}</p>
+    <button class="mt-2 text-[12px] font-medium text-gray-700 hover:underline" @click="settings.get.fetch()">Retry</button>
+  </div>
+
+  <div v-else-if="settings.doc" class="flex-1 overflow-auto p-6">
     <h3 class="mb-3 text-[13px] font-semibold text-gray-700">Connected accounts & credentials</h3>
     <div class="grid grid-cols-2 gap-4 xl:grid-cols-3">
       <!-- LinkedIn -->
