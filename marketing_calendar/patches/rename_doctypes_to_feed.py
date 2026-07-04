@@ -24,13 +24,15 @@ WORKFLOW_RENAME = ("Marketing Post Approval", "Feed Post Approval")
 
 
 def execute():
+    # ignore_permissions was removed in Frappe v16 — migration patches run as
+    # Administrator so no permission flag is needed.
     for old, new in RENAMES:
         if frappe.db.exists("DocType", old) and not frappe.db.exists("DocType", new):
-            frappe.rename_doc("DocType", old, new, ignore_permissions=True, force=True)
+            frappe.rename_doc("DocType", old, new, force=True)
             frappe.db.commit()
 
     # Rename the workflow document
     old_wf, new_wf = WORKFLOW_RENAME
     if frappe.db.exists("Workflow", old_wf) and not frappe.db.exists("Workflow", new_wf):
-        frappe.rename_doc("Workflow", old_wf, new_wf, ignore_permissions=True)
+        frappe.rename_doc("Workflow", old_wf, new_wf)
         frappe.db.commit()
