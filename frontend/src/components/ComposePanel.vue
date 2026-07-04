@@ -232,6 +232,7 @@ async function runPublishNow() {
 
 const selectedPlatforms = computed(() => PLATFORM_LIST.filter((p) => form.platforms[p.id].selected))
 const showUpload = computed(() => selectedPlatforms.value.length > 0)
+const hasVideoAssets = computed(() => form.assets.some((a) => a.file_type === 'Video'))
 
 // Blog's content lives entirely in the Blog Post you picked, not in a
 // caption — there's nothing useful to mock up for it.
@@ -311,19 +312,31 @@ function readImageDims(src) {
   })
 }
 
+function readVideoMeta(src) {
+  return new Promise((resolve) => {
+    const vid = document.createElement('video')
+    vid.preload = 'metadata'
+    vid.onloadedmetadata = () =>
+      resolve({ width: vid.videoWidth || 1080, height: vid.videoHeight || 1920, duration: Math.round(vid.duration) })
+    vid.onerror = () => resolve({ width: 1080, height: 1920, duration: 0 })
+    vid.src = src
+  })
+}
+
 async function handleFiles(fileList) {
-  const files = [...fileList].filter((f) => /image|video/.test(f.type)).slice(0, 4 - form.assets.length)
+  const files = [...fileList].filter((f) => /image|video/.test(f.type)).slice(0, 10 - form.assets.length)
   for (const file of files) {
     const isImage = /image/.test(file.type)
     const localPreview = URL.createObjectURL(file)
-    const dims = isImage ? await readImageDims(localPreview) : { width: 1280, height: 720 }
+    const meta = isImage ? { ...(await readImageDims(localPreview)), duration: null } : await readVideoMeta(localPreview)
     const asset = reactive({
       id: `a${Math.random().toString(36).slice(2)}`,
       file_url: localPreview,
       alt_text: '',
       file_type: isImage ? 'Image' : 'Video',
-      width: dims.width,
-      height: dims.height,
+      width: meta.width,
+      height: meta.height,
+      duration: meta.duration ?? null,
       size: file.size,
       uploading: true,
     })
@@ -382,13 +395,24 @@ function onAssetDrop(idx) {
 
 function previewCards(asset) {
   const ar = asset.width / asset.height || 1
+  const isVideo = asset.file_type === 'Video'
+  const kind = isVideo ? 'video' : 'image'
   return selectedPlatforms.value.map((p) => {
+    const ratio = isVideo && p.videoRatio ? p.videoRatio : p.ratio
+    const ratioLabel = isVideo && p.videoRatioLabel ? p.videoRatioLabel : p.ratioLabel
     const w = 120
-    const h = Math.round(w / p.ratio)
+    const h = Math.round(w / ratio)
     let warn = ''
-    if (ar / p.ratio < 0.6) warn = `Tall image — top & bottom may be cropped on ${p.name}.`
-    else if (ar / p.ratio > 1.75) warn = `Wide image — the sides may be cropped on ${p.name}.`
-    return { platform: p.name, color: p.color, w, h, ratioLabel: p.ratioLabel, warn }
+    const arRatio = ar / ratio
+    if (arRatio < 0.6) warn = `Tall ${kind} — top & bottom may be cropped on ${p.name}.`
+    else if (arRatio > 1.75) warn = `Wide ${kind} — the sides may be cropped on ${p.name}.`
+    if (isVideo && asset.duration != null) {
+      if (p.videoMinSec && asset.duration < p.videoMinSec)
+        warn = `Too short for ${p.name} — min ${p.videoMinSec}s, this is ${asset.duration}s.`
+      else if (p.videoMaxSec && asset.duration > p.videoMaxSec)
+        warn = `Too long for ${p.name} — max ${p.videoMaxSec}s, this is ${asset.duration}s.`
+    }
+    return { platform: p.name, color: p.color, w, h, ratioLabel, warn }
   })
 }
 function firstWarning(asset) {
@@ -547,7 +571,7 @@ async function onDelete() {
             <div v-for="p in selectedPlatforms" :key="p.id" class="flex items-center gap-2 rounded-lg border border-gray-100 px-2.5 py-2">
               <span class="h-1.5 w-1.5 rounded-sm" :style="{ background: p.color }" />
               <span class="min-w-[64px] text-[11px] font-bold text-gray-700">{{ p.name }}</span>
-              <span class="text-[11.5px] text-gray-500">{{ p.guide }}</span>
+              <span class="text-[11.5px] text-gray-500">{{ hasVideoAssets && p.videoGuide ? p.videoGuide : p.guide }}</span>
             </div>
           </div>
           <div class="ml-0">
@@ -561,7 +585,7 @@ async function onDelete() {
             >
               <LucideUpload class="h-6 w-6 text-gray-400" />
               <span class="text-[13px] font-semibold text-gray-700">Drag & drop, or click to browse</span>
-              <span class="text-[11.5px] text-ink-gray-6">PNG, JPG, MP4 — up to 4 assets for a carousel</span>
+              <span class="text-[11.5px] text-ink-gray-6">JPEG or MP4 · up to 10 assets · Instagram videos publish as Reels (9:16, 3–90s)</span>
               <input ref="fileInput" type="file" accept="image/*,video/*" multiple class="hidden" @change="onFileInputChange" @click.stop />
             </div>
 
@@ -583,9 +607,12 @@ async function onDelete() {
                   </div>
                   <div class="min-w-0 flex-1">
                     <div class="truncate text-[12.5px] font-semibold">
-                      {{ asset.uploading ? 'Uploading…' : asset.file_type }}
+                      {{ asset.uploading ? 'Uploading…' : asset.file_type === 'Video' ? 'Video / Reel' : 'Image' }}
                     </div>
-                    <div class="text-[11px] text-ink-gray-6">{{ asset.width }}×{{ asset.height }}px</div>
+                    <div class="text-[11px] text-ink-gray-6">
+                      {{ asset.width }}×{{ asset.height }}px
+                      <template v-if="asset.duration != null"> · {{ asset.duration }}s</template>
+                    </div>
                   </div>
                   <button class="flex h-6.5 w-6.5 shrink-0 items-center justify-center rounded-md bg-gray-100 text-gray-400" @click="removeAsset(asset.id)">
                     <LucideX class="h-3.5 w-3.5" />
