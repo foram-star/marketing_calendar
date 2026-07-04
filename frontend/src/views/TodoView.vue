@@ -102,13 +102,13 @@ function projectTitle(name) {
               <LucideChevronsUpDown class="h-3.5 w-3.5 shrink-0 text-gray-400" />
             </div>
           </PopoverButton>
-          <PopoverPanel class="absolute left-0 top-full z-20 mt-1.5 max-h-52 w-[190px] overflow-y-auto rounded-lg border border-gray-100 bg-white py-1 shadow-lg">
-            <PopoverButton as="button" class="flex w-full items-center px-3 py-1.5 text-left text-[12.5px] hover:bg-gray-50" :class="!selectedProject ? 'font-semibold text-gray-900' : 'text-gray-500'" @click="selectedProject = ''">No project</PopoverButton>
-            <PopoverButton as="button" v-for="p in projectsResource.data || []" :key="p.name"
+          <PopoverPanel v-slot="{ close }" class="absolute left-0 top-full z-20 mt-1.5 max-h-52 w-[190px] overflow-y-auto rounded-lg border border-gray-100 bg-white py-1 shadow-lg">
+            <button class="flex w-full items-center px-3 py-1.5 text-left text-[12.5px] hover:bg-gray-50" :class="!selectedProject ? 'font-semibold text-gray-900' : 'text-gray-500'" @click="() => { selectedProject = ''; close() }">No project</button>
+            <button v-for="p in projectsResource.data || []" :key="p.name"
               class="flex w-full items-center gap-2 px-3 py-1.5 text-left text-[12.5px] hover:bg-gray-50"
               :class="selectedProject === p.name ? 'font-semibold text-gray-900' : 'text-gray-600'"
-              @click="selectedProject = p.name"
-            >{{ p.title }}</PopoverButton>
+              @click="() => { selectedProject = p.name; close() }"
+            >{{ p.title }}</button>
           </PopoverPanel>
         </Popover>
         <Button size="sm" variant="solid" :loading="adding" :disabled="!newTitle.trim()" @click="addTodo">Add</Button>
