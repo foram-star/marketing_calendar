@@ -63,6 +63,46 @@ def _api_call(method, path, access_token, **kwargs):
 	return resp
 
 
+def _upload_video(asset, author_urn, access_token):
+	"""Chunked video upload: initializeUpload → PUT chunk(s) → finalizeUpload."""
+	init_resp = _api_call(
+		"POST",
+		"/rest/videos?action=initializeUpload",
+		access_token,
+		json={"initializeUploadRequest": {"owner": author_urn}},
+	)
+	init_data = init_resp.json()["value"]
+	video_urn = init_data["video"]
+	upload_token = init_data.get("uploadToken", "")
+	instructions = init_data.get("uploadInstructions", [])
+
+	file_url = frappe.utils.get_url(asset.file)
+	video_bytes = requests.get(file_url, timeout=120).content
+
+	etags = []
+	for instruction in instructions:
+		upload_url = instruction["uploadUrl"]
+		first_byte = instruction.get("firstByte", 0)
+		last_byte = instruction.get("lastByte", len(video_bytes) - 1)
+		chunk = video_bytes[first_byte : last_byte + 1]
+		put_resp = requests.put(
+			upload_url,
+			data=chunk,
+			headers={"Authorization": f"Bearer {access_token}", "Content-Type": "application/octet-stream"},
+			timeout=120,
+		)
+		put_resp.raise_for_status()
+		etags.append(put_resp.headers.get("ETag", ""))
+
+	_api_call(
+		"POST",
+		"/rest/videos?action=finalizeUpload",
+		access_token,
+		json={"finalizeUploadRequest": {"video": video_urn, "uploadToken": upload_token, "uploadedPartIds": etags}},
+	)
+	return video_urn
+
+
 def _upload_image(asset, author_urn, access_token):
 	init_resp = _api_call(
 		"POST",
@@ -110,10 +150,8 @@ def publish(post, platform_row):
 	access_token = account.get_password("access_token")
 	author_urn = f"urn:li:person:{account.external_account_id}"
 
-	images = [a for a in post.assets if a.file_type == "Image"][:1]  # one image per post; LinkedIn's multi-image "Document" post type is a different, unbuilt content shape
-	videos = [a for a in post.assets if a.file_type == "Video"]
-	if videos and not images:
-		frappe.throw(_("LinkedIn video posts aren't supported yet — use an image or a text-only post for now."))
+	images = [a for a in post.assets if a.file_type == "Image"][:1]
+	videos = [a for a in post.assets if a.file_type == "Video"][:1]
 
 	body = {
 		"author": author_urn,
@@ -127,7 +165,9 @@ def publish(post, platform_row):
 		"lifecycleState": "PUBLISHED",
 		"isReshareDisabledByAuthor": False,
 	}
-	if images:
+	if videos:
+		body["content"] = {"media": {"id": _upload_video(videos[0], author_urn, access_token)}}
+	elif images:
 		body["content"] = {"media": {"id": _upload_image(images[0], author_urn, access_token)}}
 	elif platform_row.link_url:
 		body["content"] = {"article": {"source": platform_row.link_url}}

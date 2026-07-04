@@ -283,7 +283,7 @@ function goToProjectFilter(projectName) {
           <LucideTrash2 class="h-3.5 w-3.5 shrink-0 cursor-pointer text-gray-300 opacity-0 group-hover:opacity-100 hover:text-red-500" @click="removeTodo(todo)" />
         </div>
         <div v-if="!pendingTodos.length" class="py-5 text-center text-[12px] text-ink-gray-6">
-          Nothing open{{ filteredProject ? ` for "${filteredProject.title}"` : '' }} — add one above.
+          No open tasks{{ filteredProject ? ` for "${filteredProject.title}"` : '' }}.
         </div>
       </div>
 

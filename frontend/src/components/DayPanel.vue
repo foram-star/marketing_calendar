@@ -20,7 +20,7 @@ const weekdayLabel = computed(() => {
 const dateLabel = computed(() => (props.day ? `${MONTH_NAMES[props.day.m]} ${props.day.d}` : ''))
 const subtitle = computed(() => {
   const n = props.day?.posts?.length || 0
-  if (!n) return 'Nothing planned yet'
+  if (!n) return 'No posts'
   return n === 1 ? '1 post scheduled' : `${n} posts scheduled`
 })
 </script>
@@ -72,7 +72,7 @@ const subtitle = computed(() => {
           <div class="flex flex-col gap-1">
             <span class="text-[14px] font-semibold text-gray-700">No posts scheduled</span>
             <span class="max-w-[220px] text-[12.5px] leading-relaxed text-ink-gray-6">
-              This day's wide open. Add your first post and it'll show up right here.
+              Nothing scheduled.
             </span>
           </div>
         </div>

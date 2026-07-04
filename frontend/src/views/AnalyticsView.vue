@@ -45,7 +45,7 @@ function fmtFailedAt(dt) {
   <header class="flex items-center gap-3.5 border-b border-gray-100 bg-white px-6 pb-3.5 pt-4">
     <div class="flex flex-col gap-0.5">
       <h1 class="m-0 text-[17px] font-semibold">Analytics</h1>
-      <span class="text-[12px] text-ink-gray-6">Operational overview — publish outcomes we've recorded ourselves</span>
+      <span class="text-[12px] text-ink-gray-6">Track progress</span>
     </div>
   </header>
 
@@ -69,7 +69,7 @@ function fmtFailedAt(dt) {
             colors: statusColors,
           }"
         />
-        <div v-else class="flex h-[220px] items-center justify-center text-[12.5px] text-ink-gray-6">No posts yet</div>
+        <div v-else class="flex h-[220px] items-center justify-center text-[12.5px] text-ink-gray-6">No posts</div>
       </div>
       <div class="rounded-xl border border-gray-100 bg-white p-2 shadow-sm">
         <DonutChart
@@ -82,7 +82,7 @@ function fmtFailedAt(dt) {
             colors: platformColors,
           }"
         />
-        <div v-else class="flex h-[220px] items-center justify-center text-[12.5px] text-ink-gray-6">No platforms selected yet</div>
+        <div v-else class="flex h-[220px] items-center justify-center text-[12.5px] text-ink-gray-6">No data</div>
       </div>
     </div>
 
@@ -95,7 +95,7 @@ function fmtFailedAt(dt) {
       <div class="flex flex-col items-center gap-2 px-4 py-10 text-center">
         <span class="rounded-full bg-gray-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-ink-gray-6">Coming soon</span>
         <p class="m-0 max-w-[380px] text-[12.5px] text-ink-gray-6">
-          Once LinkedIn and X are connected, per-platform engagement metrics (impressions, reach, reactions) will appear here alongside Instagram's existing data.
+          Connect LinkedIn and X to see engagement metrics here.
         </p>
       </div>
     </div>
@@ -117,7 +117,7 @@ function fmtFailedAt(dt) {
           <span class="text-[10.5px] text-ink-gray-6">{{ fmtFailedAt(f.last_attempted_at) }}</span>
         </div>
       </div>
-      <div v-else class="px-4 py-8 text-center text-[12.5px] text-ink-gray-6">Nothing's failed — clean record.</div>
+      <div v-else class="px-4 py-8 text-center text-[12.5px] text-ink-gray-6">Nothing's failed.</div>
     </div>
   </div>
 </template>

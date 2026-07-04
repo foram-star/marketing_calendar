@@ -6,6 +6,7 @@
  "engine": "InnoDB",
  "field_order": [
   "file",
+  "thumbnail",
   "file_type",
   "thumbnail",
   "alt_text",
@@ -31,7 +32,7 @@
   },
   {
    "depends_on": "eval:doc.file_type == 'Video'",
-   "description": "Custom cover image for this video — only meaningful once a video is attached.",
+   "description": "Custom cover image for this video \u2014 only meaningful once a video is attached.",
    "fieldname": "thumbnail",
    "fieldtype": "Attach",
    "label": "Thumbnail"
@@ -56,6 +57,12 @@
    "fieldname": "file_size",
    "fieldtype": "Int",
    "label": "File Size (bytes)"
+  },
+  {
+   "fieldname": "thumbnail",
+   "fieldtype": "Attach",
+   "label": "Thumbnail",
+   "description": "Custom cover image for video assets (Instagram Reels)"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -63,7 +70,7 @@
  "links": [],
  "modified": "2026-06-17 10:00:00.000000",
  "modified_by": "Administrator",
- "module": "Marketing Calendar",
+ "module": "Feed",
  "name": "Marketing Post Asset",
  "owner": "Administrator",
  "permissions": [],

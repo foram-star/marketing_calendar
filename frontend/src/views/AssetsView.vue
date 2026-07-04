@@ -88,7 +88,7 @@ function onClose() {
       <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100">
         <LucideImages class="h-6 w-6 text-ink-gray-6" />
       </div>
-      <p class="m-0 text-[13px] font-medium text-gray-500">No assets yet — upload images or video from a post's Compose panel.</p>
+      <p class="m-0 text-[13px] font-medium text-gray-500">No photo/video assets yet.</p>
     </div>
   </div>
 

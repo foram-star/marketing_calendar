@@ -19,7 +19,7 @@ defineProps({
       <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100">
         <LucideConstruction class="h-6 w-6 text-gray-400" />
       </div>
-      <p class="m-0 text-[13px] font-medium text-gray-500">Coming up in a later build phase</p>
+      <p class="m-0 text-[13px] font-medium text-gray-500">Coming soon</p>
     </div>
   </div>
 </template>

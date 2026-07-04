@@ -893,7 +893,7 @@ async function onDelete() {
                 </div>
               </div>
               <p v-if="!otherTransitions.length && !timingTransitions.length && !canPublishNow" class="m-0 text-[12px] text-ink-gray-6">
-                Nothing pending — this post has no further workflow actions right now.
+                No actions available.
               </p>
 
               <div class="flex flex-col gap-2.5 border-t border-gray-100 pt-3">

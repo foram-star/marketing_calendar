@@ -190,7 +190,6 @@ function onPillLeave() {
   <header class="flex items-center gap-3.5 border-b border-gray-100 bg-white px-6 pb-3.5 pt-4">
     <div class="flex flex-col gap-0.5">
       <h1 class="m-0 text-[17px] font-semibold">Content Calendar</h1>
-      <span class="text-[12px] text-ink-gray-6">Plan & schedule posts across platforms</span>
     </div>
     <Button variant="solid" class="ml-auto" @click="openCompose(null)">
       <template #prefix><LucidePlus class="h-3.5 w-3.5" /></template>
