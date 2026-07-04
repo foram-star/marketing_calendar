@@ -14,13 +14,13 @@ from marketing_calendar.api import run_publish
 
 def publish_due_posts():
 	due = frappe.get_all(
-		"Marketing Post",
+		"Feed Post",
 		filters={"status": "Scheduled", "scheduled_on": ["<=", frappe.utils.now_datetime()]},
 		pluck="name",
 	)
 	for name in due:
 		try:
-			doc = frappe.get_doc("Marketing Post", name)
+			doc = frappe.get_doc("Feed Post", name)
 			run_publish(doc)
 		except Exception:
 			frappe.log_error(title=f"Scheduled publish failed for {name}")

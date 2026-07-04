@@ -1,6 +1,6 @@
 // Date-grid helpers ported from the validated prototype (Feed.dc.html) —
 // the month/week building logic was already correct there, just re-targeted to
-// read from real `Marketing Post.scheduled_on` values instead of a static array.
+// read from real `Feed Post.scheduled_on` values instead of a static array.
 
 export const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',

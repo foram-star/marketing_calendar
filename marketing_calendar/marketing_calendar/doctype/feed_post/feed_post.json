@@ -1,0 +1,154 @@
+{
+ "actions": [],
+ "autoname": "format:MKT-POST-{#####}",
+ "creation": "2026-06-17 10:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "status",
+  "cb_01",
+  "scheduled_on",
+  "assigned_to",
+  "reviewer",
+  "marketing_project",
+  "sb_content",
+  "tags",
+  "sb_platforms",
+  "platforms",
+  "sb_assets",
+  "assets"
+ ],
+ "fields": [
+  {
+   "description": "Internal reference name, not necessarily public-facing.",
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Title",
+   "reqd": 1
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Draft\nIn Review\nApproved\nRejected\nScheduled\nPublished\nPartially Published\nFailed",
+   "reqd": 1
+  },
+  {
+   "fieldname": "cb_01",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "scheduled_on",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Publish Date & Time"
+  },
+  {
+   "fieldname": "assigned_to",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Assigned To",
+   "options": "User"
+  },
+  {
+   "fieldname": "reviewer",
+   "fieldtype": "Link",
+   "label": "Reviewer",
+   "options": "User"
+  },
+  {
+   "fieldname": "marketing_project",
+   "fieldtype": "Link",
+   "label": "Linked Project",
+   "options": "Feed Project"
+  },
+  {
+   "description": "Each platform below has its own caption/content and options.",
+   "fieldname": "sb_content",
+   "fieldtype": "Section Break",
+   "label": "Content"
+  },
+  {
+   "fieldname": "tags",
+   "fieldtype": "Table",
+   "label": "Tags",
+   "options": "Feed Post Tag"
+  },
+  {
+   "fieldname": "sb_platforms",
+   "fieldtype": "Section Break",
+   "label": "Platforms"
+  },
+  {
+   "fieldname": "platforms",
+   "fieldtype": "Table",
+   "label": "Platforms",
+   "options": "Feed Post Platform"
+  },
+  {
+   "fieldname": "sb_assets",
+   "fieldtype": "Section Break",
+   "label": "Creative Assets"
+  },
+  {
+   "fieldname": "assets",
+   "fieldtype": "Table",
+   "label": "Assets",
+   "options": "Feed Post Asset"
+  }
+ ],
+ "links": [],
+ "modified": "2026-06-24 18:15:16.198384",
+ "modified_by": "Administrator",
+ "module": "Marketing Calendar",
+ "name": "Feed Post",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Marketing Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Marketing User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "title",
+ "track_changes": 1
+}

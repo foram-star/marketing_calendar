@@ -34,14 +34,14 @@ LINKEDIN_VERSION = "202506"
 
 def _connected_account():
 	name = frappe.db.get_value(
-		"Marketing Social Account",
+		"Feed Social Account",
 		{"platform": "LinkedIn", "enabled": 1, "status": "Connected"},
 		"name",
 		order_by="modified desc",
 	)
 	if not name:
 		frappe.throw(_("No connected LinkedIn account — connect one in Settings first."))
-	return frappe.get_doc("Marketing Social Account", name)
+	return frappe.get_doc("Feed Social Account", name)
 
 
 def _headers(access_token):

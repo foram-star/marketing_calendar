@@ -40,7 +40,7 @@ export function fetchPostsTable({ status, search, platform, assigned_to } = {}) 
 // Plain mutator — `createListResource` gives us `frappe.client.insert` /
 // `frappe.client.set_value`, both of which accept nested child-table rows
 // (platforms/assets/tags) in a single round trip.
-const mutator = createListResource({ doctype: 'Marketing Post', auto: false })
+const mutator = createListResource({ doctype: 'Feed Post', auto: false })
 
 export function createPost(values) {
   return mutator.insert.submit(values).then((doc) => {
@@ -62,5 +62,5 @@ export function deletePost(name) {
 
 /** Full document (incl. child tables) for editing an existing post in Compose. */
 export function usePostDocument(name) {
-  return createDocumentResource({ doctype: 'Marketing Post', name, auto: !!name })
+  return createDocumentResource({ doctype: 'Feed Post', name, auto: !!name })
 }

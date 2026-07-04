@@ -7,16 +7,16 @@ from frappe.desk.doctype.notification_log.notification_log import enqueue_create
 # Where each doctype's record opens inside the standalone /marketing SPA, so a
 # notification clicked from Frappe's own bell icon still lands somewhere useful.
 DEEP_LINK_ROUTES = {
-	"Marketing Post": "/marketing/posts/{name}",
-	"Marketing Project": "/marketing/projects/{name}",
-	"Marketing Task": "/marketing/todo?task={name}",
+	"Feed Post": "/marketing/posts/{name}",
+	"Feed Project": "/marketing/projects/{name}",
+	"Feed Task": "/marketing/todo?task={name}",
 }
 
 
 def notify(users: list[str], subject: str, message: str, doc) -> None:
 	"""Notify `users` about `doc` via Frappe's standard Notification Log + realtime bell.
 
-	`doc` is the triggering document (Marketing Post / Marketing Project, ...). This
+	`doc` is the triggering document (Feed Post / Feed Project, ...). This
 	reuses `enqueue_create_notification`, the same helper Frappe uses for
 	assignment/share/mention alerts, so entries show up in the normal bell icon
 	(`after_insert` on Notification Log already does the `frappe.publish_realtime`

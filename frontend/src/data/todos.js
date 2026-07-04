@@ -4,7 +4,7 @@ export const todosResource = createResource({
   url: 'frappe.client.get_list',
   auto: false,
   params: {
-    doctype: 'Marketing Task',
+    doctype: 'Feed Task',
     fields: ['name', 'title', 'done', 'marketing_project', 'assigned_to', 'description'],
     limit_page_length: 0,
     order_by: 'creation desc',
@@ -15,7 +15,7 @@ export function fetchTodos() {
   return todosResource.fetch()
 }
 
-const mutator = createListResource({ doctype: 'Marketing Task', auto: false })
+const mutator = createListResource({ doctype: 'Feed Task', auto: false })
 
 export function createTodo(values) {
   return mutator.insert.submit(values).then((doc) => {

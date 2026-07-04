@@ -31,14 +31,14 @@ REPLY_SETTINGS = {"Following": "following", "Mentioned": "mentionedUsers"}  # "E
 
 def _connected_account():
 	name = frappe.db.get_value(
-		"Marketing Social Account",
+		"Feed Social Account",
 		{"platform": "X", "enabled": 1, "status": "Connected"},
 		"name",
 		order_by="modified desc",
 	)
 	if not name:
 		frappe.throw(_("No connected X account — connect one in Settings first."))
-	return frappe.get_doc("Marketing Social Account", name)
+	return frappe.get_doc("Feed Social Account", name)
 
 
 def _refresh_if_needed(account):
@@ -49,7 +49,7 @@ def _refresh_if_needed(account):
 	if not refresh_token:
 		frappe.throw(_("X access token expired and there's no refresh token saved — reconnect this account in Settings."))
 
-	settings = frappe.get_single("Marketing Calendar Settings")
+	settings = frappe.get_single("Feed Settings")
 	resp = requests.post(
 		f"{API_BASE}/oauth2/token",
 		data={"grant_type": "refresh_token", "refresh_token": refresh_token, "client_id": settings.x_client_id},

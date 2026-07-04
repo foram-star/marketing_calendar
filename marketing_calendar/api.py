@@ -26,7 +26,7 @@ INTEGRATIONS = {
 
 @frappe.whitelist()
 def get_team_members():
-	"""Users who can be assigned/reviewed on a Marketing Post (for avatars/pickers)."""
+	"""Users who can be assigned/reviewed on a Feed Post (for avatars/pickers)."""
 	user_names = frappe.get_all(
 		"Has Role",
 		filters={"role": ["in", ["Marketing Manager", "Marketing User"]], "parenttype": "User"},
@@ -76,12 +76,12 @@ def list_posts(status=None, search=None, start=None, end=None, platform=None, as
 	if platform:
 		operator, value = platform if isinstance(platform, list) else ["=", platform]
 		matching_parents = frappe.get_all(
-			"Marketing Post Platform", filters={"platform": value}, pluck="parent", distinct=True
+			"Feed Post Platform", filters={"platform": value}, pluck="parent", distinct=True
 		)
 		filters["name"] = ["not in", matching_parents] if operator == "!=" else ["in", matching_parents or [""]]
 
 	posts = frappe.get_all(
-		"Marketing Post",
+		"Feed Post",
 		filters=filters,
 		or_filters={"title": ["like", f"%{search}%"]} if search else None,
 		fields=POST_LIST_FIELDS,
@@ -92,7 +92,7 @@ def list_posts(status=None, search=None, start=None, end=None, platform=None, as
 
 	names = [p.name for p in posts]
 	platform_rows = frappe.get_all(
-		"Marketing Post Platform",
+		"Feed Post Platform",
 		filters={"parent": ["in", names]},
 		fields=["parent", "platform", "status", "external_url", "caption"],
 		order_by="idx asc",
@@ -109,7 +109,7 @@ def list_posts(status=None, search=None, start=None, end=None, platform=None, as
 @frappe.whitelist()
 def list_assets(file_type=None, search=None):
 	"""Every uploaded creative across all posts, with enough of the parent post
-	to give context — `Marketing Post Asset` is a child table so a plain
+	to give context — `Feed Post Asset` is a child table so a plain
 	`get_list` can't see it; this is the gallery's only query."""
 	filters = {}
 	if file_type and file_type != "All":
@@ -118,7 +118,7 @@ def list_assets(file_type=None, search=None):
 		filters["alt_text"] = ["like", f"%{search}%"]
 
 	assets = frappe.get_all(
-		"Marketing Post Asset",
+		"Feed Post Asset",
 		filters=filters,
 		fields=["name", "parent", "file", "file_type", "alt_text", "width", "height", "file_size"],
 		order_by="creation desc",
@@ -128,7 +128,7 @@ def list_assets(file_type=None, search=None):
 
 	parent_names = list({a.parent for a in assets})
 	posts = frappe.get_all(
-		"Marketing Post",
+		"Feed Post",
 		filters={"name": ["in", parent_names]},
 		fields=["name", "title", "status", "scheduled_on"],
 	)
@@ -147,19 +147,19 @@ def get_analytics():
 	status_counts = {
 		row.status: row.count
 		for row in frappe.get_all(
-			"Marketing Post", group_by="status", fields=["status", {"COUNT": "name", "as": "count"}]
+			"Feed Post", group_by="status", fields=["status", {"COUNT": "name", "as": "count"}]
 		)
 	}
 	platform_counts = {
 		row.platform: row.count
 		for row in frappe.get_all(
-			"Marketing Post Platform",
+			"Feed Post Platform",
 			group_by="platform",
 			fields=["platform", {"COUNT": "name", "as": "count"}],
 		)
 	}
 	platform_outcome_counts = frappe.get_all(
-		"Marketing Post Platform",
+		"Feed Post Platform",
 		group_by="platform, status",
 		fields=["platform", "status", {"COUNT": "name", "as": "count"}],
 	)
@@ -169,15 +169,15 @@ def get_analytics():
 	month_start = frappe.utils.get_first_day(today)
 
 	upcoming_count = frappe.db.count(
-		"Marketing Post", {"status": "Scheduled", "scheduled_on": ["between", [today, week_end]]}
+		"Feed Post", {"status": "Scheduled", "scheduled_on": ["between", [today, week_end]]}
 	)
 	published_this_month = frappe.db.count(
-		"Marketing Post Platform",
+		"Feed Post Platform",
 		{"status": "Published", "published_at": [">=", month_start]},
 	)
 
 	recent_failures = frappe.get_all(
-		"Marketing Post Platform",
+		"Feed Post Platform",
 		filters={"status": "Failed"},
 		fields=["parent", "platform", "error_message", "last_attempted_at"],
 		order_by="last_attempted_at desc",
@@ -185,7 +185,7 @@ def get_analytics():
 	)
 	if recent_failures:
 		titles = frappe.get_all(
-			"Marketing Post",
+			"Feed Post",
 			filters={"name": ["in", [r.parent for r in recent_failures]]},
 			fields=["name", "title"],
 		)
@@ -251,8 +251,8 @@ def run_publish(doc):
 	else:
 		action = "Mark Failed"
 
-	apply_workflow({"doctype": "Marketing Post", "name": doc.name}, action)
-	return frappe.get_doc("Marketing Post", doc.name)
+	apply_workflow({"doctype": "Feed Post", "name": doc.name}, action)
+	return frappe.get_doc("Feed Post", doc.name)
 
 
 @frappe.whitelist()
@@ -264,7 +264,7 @@ def publish_now(post):
 	gone through the same Scheduled state on its way out, keeping the workflow
 	graph and any reporting built on it consistent.
 	"""
-	doc = frappe.get_doc("Marketing Post", post)
+	doc = frappe.get_doc("Feed Post", post)
 	doc.check_permission("write")
 
 	if doc.status == "Approved":
@@ -272,13 +272,13 @@ def publish_now(post):
 			doc.scheduled_on = frappe.utils.now_datetime()
 			doc.save(ignore_permissions=True)
 			frappe.db.commit()
-		apply_workflow({"doctype": "Marketing Post", "name": doc.name}, "Schedule")
+		apply_workflow({"doctype": "Feed Post", "name": doc.name}, "Schedule")
 		doc.reload()
 	elif doc.status == "Failed":
 		# The only transition out of Failed is Retry -> Scheduled — run_publish's
 		# own closing "Mark Published/Partially Published/Failed" transitions only
 		# exist *from* Scheduled, so a retry has to walk back through it first.
-		apply_workflow({"doctype": "Marketing Post", "name": doc.name}, "Retry")
+		apply_workflow({"doctype": "Feed Post", "name": doc.name}, "Retry")
 		doc.reload()
 	elif doc.status != "Scheduled":
 		frappe.throw(_("Only an Approved, Scheduled, or Failed post can be published."))
@@ -310,9 +310,9 @@ def connect_instagram():
 	redirects don't reliably carry session cookies the same way same-site
 	navigation does.
 	"""
-	settings = frappe.get_single("Marketing Calendar Settings")
+	settings = frappe.get_single("Feed Settings")
 	if not settings.meta_app_id:
-		frappe.throw(_("Add a Meta App ID in Marketing Calendar Settings first."))
+		frappe.throw(_("Add a Meta App ID in Feed Settings first."))
 
 	state = frappe.generate_hash(length=20)
 	frappe.cache().set_value(f"mc_oauth_state:{state}", frappe.session.user, expires_in_sec=600)
@@ -329,7 +329,7 @@ def connect_instagram():
 
 @frappe.whitelist(allow_guest=True)
 def oauth_callback_instagram(code=None, state=None, error=None, error_description=None):
-	settings = frappe.get_single("Marketing Calendar Settings")
+	settings = frappe.get_single("Feed Settings")
 	print(f"Instagram OAuth callback: code={code}, state={state}, error={error}, error_description={error_description}")
 
 	def fail(message):
@@ -422,7 +422,7 @@ def _verify_webhook_subscription(request):
 	challenge = request.args.get("hub.challenge")
 	token = request.args.get("hub.verify_token")
 
-	expected = frappe.db.get_single_value("Marketing Calendar Settings", "meta_webhook_verify_token")
+	expected = frappe.db.get_single_value("Feed Settings", "meta_webhook_verify_token")
 	if mode == "subscribe" and expected and token == expected and challenge:
 		return Response(challenge, status=200, mimetype="text/plain")
 
@@ -432,7 +432,7 @@ def _verify_webhook_subscription(request):
 
 def _verify_webhook_signature(request):
 	signature = request.headers.get("X-Hub-Signature-256", "")
-	secret = frappe.get_single("Marketing Calendar Settings").get_password("meta_app_secret")
+	secret = frappe.get_single("Feed Settings").get_password("meta_app_secret")
 	if not secret:
 		frappe.throw(_("No Meta App Secret configured"), frappe.AuthenticationError)
 
@@ -445,12 +445,12 @@ def _save_connected_account(platform, external_id, label, access_token, expires_
 	"""Shared by every platform's callback below — same upsert-by-external-id
 	shape Instagram's callback already proved out."""
 	existing_name = frappe.db.get_value(
-		"Marketing Social Account", {"platform": platform, "external_account_id": external_id}
+		"Feed Social Account", {"platform": platform, "external_account_id": external_id}
 	)
 	doc = (
-		frappe.get_doc("Marketing Social Account", existing_name)
+		frappe.get_doc("Feed Social Account", existing_name)
 		if existing_name
-		else frappe.new_doc("Marketing Social Account")
+		else frappe.new_doc("Feed Social Account")
 	)
 	doc.platform = platform
 	doc.account_label = label
@@ -483,9 +483,9 @@ LINKEDIN_SCOPES = "openid profile w_member_social"
 
 @frappe.whitelist()
 def connect_linkedin():
-	settings = frappe.get_single("Marketing Calendar Settings")
+	settings = frappe.get_single("Feed Settings")
 	if not settings.linkedin_client_id:
-		frappe.throw(_("Add a LinkedIn Client ID in Marketing Calendar Settings first."))
+		frappe.throw(_("Add a LinkedIn Client ID in Feed Settings first."))
 
 	state = frappe.generate_hash(length=20)
 	frappe.cache().set_value(f"mc_oauth_state:{state}", frappe.session.user, expires_in_sec=600)
@@ -502,7 +502,7 @@ def connect_linkedin():
 
 @frappe.whitelist(allow_guest=True)
 def oauth_callback_linkedin(code=None, state=None, error=None, error_description=None):
-	settings = frappe.get_single("Marketing Calendar Settings")
+	settings = frappe.get_single("Feed Settings")
 
 	def fail(message):
 		frappe.log_error(title="LinkedIn OAuth failed", message=message)
@@ -568,9 +568,9 @@ def _pkce_pair():
 
 @frappe.whitelist()
 def connect_x():
-	settings = frappe.get_single("Marketing Calendar Settings")
+	settings = frappe.get_single("Feed Settings")
 	if not settings.x_client_id:
-		frappe.throw(_("Add an X Client ID in Marketing Calendar Settings first."))
+		frappe.throw(_("Add an X Client ID in Feed Settings first."))
 
 	state = frappe.generate_hash(length=20)
 	verifier, challenge = _pkce_pair()
@@ -591,7 +591,7 @@ def connect_x():
 
 @frappe.whitelist(allow_guest=True)
 def oauth_callback_x(code=None, state=None, error=None, error_description=None):
-	settings = frappe.get_single("Marketing Calendar Settings")
+	settings = frappe.get_single("Feed Settings")
 
 	def fail(message):
 		frappe.log_error(title="X OAuth failed", message=message)

@@ -196,12 +196,12 @@ async function handleLogout() {
             <!-- Actions -->
             <div class="py-1">
               <a
-                href="/app"
+                href="/desk/marketing-calendar"
                 target="_blank"
                 class="flex items-center gap-2.5 px-3.5 py-2 text-[12.5px] text-gray-700 hover:bg-gray-50"
               >
                 <LucideExternalLink class="h-3.5 w-3.5 shrink-0 text-gray-400" />
-                Back to Desk
+                View in Desk
               </a>
               <button
                 class="flex w-full items-center gap-2.5 px-3.5 py-2 text-left text-[12.5px] text-gray-700 hover:bg-gray-50"

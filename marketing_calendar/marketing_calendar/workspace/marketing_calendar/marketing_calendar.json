@@ -1,7 +1,7 @@
 {
  "app": "marketing_calendar",
  "charts": [],
- "content": "[{\"id\":\"mc01\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Open Feed\",\"col\":4}},{\"id\":\"mc02\",\"type\":\"paragraph\",\"data\":{\"text\":\"Records\",\"col\":12}},{\"id\":\"mc03\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Marketing Posts\",\"col\":3}},{\"id\":\"mc04\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Marketing Projects\",\"col\":3}},{\"id\":\"mc06\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Marketing Tasks\",\"col\":3}},{\"id\":\"mc05\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Marketing Calendar Settings\",\"col\":3}}]",
+ "content": "[{\"id\": \"mc01\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Open Feed\", \"col\": 4}}, {\"id\": \"mc02\", \"type\": \"paragraph\", \"data\": {\"text\": \"Records\", \"col\": 12}}, {\"id\": \"mc03\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Feed Posts\", \"col\": 3}}, {\"id\": \"mc04\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Feed Projects\", \"col\": 3}}, {\"id\": \"mc06\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Feed Tasks\", \"col\": 3}}, {\"id\": \"mc05\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Feed Settings\", \"col\": 3}}]",
  "creation": "2026-06-18 00:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
@@ -36,32 +36,32 @@
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Marketing Posts",
-   "link_to": "Marketing Post",
+   "label": "Feed Posts",
+   "link_to": "Feed Post",
    "stats_filter": "[]",
    "type": "DocType"
   },
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Marketing Projects",
-   "link_to": "Marketing Project",
+   "label": "Feed Projects",
+   "link_to": "Feed Project",
    "stats_filter": "[]",
    "type": "DocType"
   },
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Marketing Tasks",
-   "link_to": "Marketing Task",
+   "label": "Feed Tasks",
+   "link_to": "Feed Task",
    "stats_filter": "[]",
    "type": "DocType"
   },
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Marketing Calendar Settings",
-   "link_to": "Marketing Calendar Settings",
+   "label": "Feed Settings",
+   "link_to": "Feed Settings",
    "stats_filter": "[]",
    "type": "DocType"
   }

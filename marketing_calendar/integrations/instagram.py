@@ -2,7 +2,7 @@
 # For license information, please see license.txt
 
 """Instagram connector — Meta's Content Publishing API, using whichever
-connected `Marketing Social Account` token the OAuth flow in api.py stored.
+connected `Feed Social Account` token the OAuth flow in api.py stored.
 Two-step container flow per Meta's docs: create a media container, poll until
 it's finished processing, then publish it. A second asset turns this into a
 carousel container instead of a single-image one — Instagram has no other
@@ -35,14 +35,14 @@ MAX_COLLABORATORS = 2  # Meta's own cap is 3 for images/Reels — ours is tighte
 
 def _connected_account():
 	name = frappe.db.get_value(
-		"Marketing Social Account",
+		"Feed Social Account",
 		{"platform": "Instagram", "enabled": 1, "status": "Connected"},
 		"name",
 		order_by="modified desc",
 	)
 	if not name:
 		frappe.throw(_("No connected Instagram account — connect one in Settings first."))
-	return frappe.get_doc("Marketing Social Account", name)
+	return frappe.get_doc("Feed Social Account", name)
 
 
 def _graph_call(method, path, **kwargs):

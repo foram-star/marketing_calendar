@@ -22,7 +22,7 @@ const team = useTeam()
 const projectsResource = createResource({
   url: 'frappe.client.get_list',
   auto: true,
-  params: { doctype: 'Marketing Project', fields: ['name', 'title'], limit_page_length: 100 },
+  params: { doctype: 'Feed Project', fields: ['name', 'title'], limit_page_length: 100 },
 })
 const blogPostsResource = createResource({
   url: 'frappe.client.get_list',
@@ -111,7 +111,7 @@ const errorMessage = ref('')
 // Local snapshot of the persisted post's workflow status — kept separate from
 // `form` since workflow actions operate on the saved doc, not in-progress edits.
 const livePost = reactive({ name: props.post?.name || null, status: props.post?.status || 'Draft' })
-const workflow = useWorkflow('Marketing Post', () => livePost.name)
+const workflow = useWorkflow('Feed Post', () => livePost.name)
 const actionLoading = ref('')
 
 // Real per-platform outcomes (status/error_message/attempt_count) — kept
@@ -134,7 +134,7 @@ const commentsResource = createResource({
   auto: false,
   params: {
     doctype: 'Comment',
-    filters: { reference_doctype: 'Marketing Post', reference_name: livePost.name, comment_type: 'Comment' },
+    filters: { reference_doctype: 'Feed Post', reference_name: livePost.name, comment_type: 'Comment' },
     fields: ['name', 'content', 'comment_by', 'creation'],
     order_by: 'creation desc',
   },
@@ -146,7 +146,7 @@ async function submitComment() {
   commentSubmitting.value = true
   try {
     await call('frappe.desk.form.utils.add_comment', {
-      reference_doctype: 'Marketing Post',
+      reference_doctype: 'Feed Post',
       reference_name: livePost.name,
       content: newComment.value.trim(),
       comment_email: window.user,

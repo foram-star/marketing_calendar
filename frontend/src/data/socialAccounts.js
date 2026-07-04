@@ -4,7 +4,7 @@ export const socialAccountsResource = createResource({
   url: 'frappe.client.get_list',
   auto: false,
   params: {
-    doctype: 'Marketing Social Account',
+    doctype: 'Feed Social Account',
     fields: ['name', 'platform', 'account_label', 'enabled', 'status', 'external_username', 'token_expires_on', 'last_synced_on', 'last_error'],
     limit_page_length: 0,
   },

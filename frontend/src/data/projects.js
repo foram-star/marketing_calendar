@@ -12,7 +12,7 @@ export const projectsResource = createResource({
   url: 'frappe.client.get_list',
   auto: false,
   params: {
-    doctype: 'Marketing Project',
+    doctype: 'Feed Project',
     fields: ['name', 'title', 'stage', 'priority', 'project_owner', 'due_date', 'description'],
     limit_page_length: 0,
     order_by: 'due_date asc',
@@ -23,7 +23,7 @@ export function fetchProjects() {
   return projectsResource.fetch()
 }
 
-const mutator = createListResource({ doctype: 'Marketing Project', auto: false })
+const mutator = createListResource({ doctype: 'Feed Project', auto: false })
 
 export function createProject(values) {
   return mutator.insert.submit(values).then((doc) => {

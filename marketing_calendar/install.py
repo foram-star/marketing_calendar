@@ -5,7 +5,7 @@ import frappe
 
 ROLES = ["Marketing Manager", "Marketing User"]
 
-WORKFLOW_NAME = "Marketing Post Approval"
+WORKFLOW_NAME = "Feed Post Approval"
 
 # Pending/Approved/Rejected and Approve/Reject/Review already exist as Frappe
 # defaults; everything else here is new and needs to be created once.
@@ -104,7 +104,7 @@ def create_workflow():
 		{
 			"doctype": "Workflow",
 			"workflow_name": WORKFLOW_NAME,
-			"document_type": "Marketing Post",
+			"document_type": "Feed Post",
 			"workflow_state_field": "status",
 			"is_active": 1,
 			"send_email_alert": 0,

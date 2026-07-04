@@ -8,8 +8,8 @@ import { createDocumentResource } from 'frappe-ui'
 // it only overwrites the real secret if we hand it back something else.
 export function useCalendarSettings() {
   return createDocumentResource({
-    doctype: 'Marketing Calendar Settings',
-    name: 'Marketing Calendar Settings',
+    doctype: 'Feed Settings',
+    name: 'Feed Settings',
     auto: true,
   })
 }
