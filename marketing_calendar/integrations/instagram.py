@@ -28,8 +28,8 @@ import requests
 from frappe import _
 
 GRAPH_BASE = "https://graph.instagram.com/v25.0"
-POLL_INTERVAL_SECONDS = 2
-POLL_MAX_ATTEMPTS = 30
+POLL_INTERVAL_SECONDS = 3
+POLL_MAX_ATTEMPTS = 60   # 3 min total — Reel processing can take 2–5 min on Meta's side
 MAX_COLLABORATORS = 2  # Meta's own cap is 3 for images/Reels — ours is tighter, by request
 
 
@@ -61,17 +61,25 @@ def _graph_call(method, path, **kwargs):
 def _wait_until_finished(container_id, access_token):
 	for _attempt in range(POLL_MAX_ATTEMPTS):
 		data = _graph_call(
-			"GET", container_id, params={"fields": "status_code", "access_token": access_token}
+			"GET", container_id,
+			params={"fields": "status_code,status", "access_token": access_token},
 		)
 		status = data.get("status_code")
 		if status == "FINISHED":
 			return
 		if status in ("ERROR", "EXPIRED"):
-			frappe.throw(_("Instagram couldn't process this media (status: {0}).").format(status))
+			detail = data.get("status") or status
+			frappe.log_error(
+				title="Instagram media processing failed",
+				message=f"container={container_id} status={status} full_response={data}",
+			)
+			frappe.throw(
+				_("Instagram couldn't process this media — {0}. Check the Error Log for details.").format(detail)
+			)
 		time.sleep(POLL_INTERVAL_SECONDS)
-	frappe.throw(_("Instagram is still processing this media after {0}s — try publishing again shortly.").format(
-		POLL_INTERVAL_SECONDS * POLL_MAX_ATTEMPTS
-	))
+	frappe.throw(
+		_("Instagram is still processing — the video may still publish shortly via the scheduler. Check back in a few minutes.")
+	)
 
 
 def _collaborators(platform_row):
@@ -107,6 +115,11 @@ def publish(post, platform_row):
 			payload["video_url"] = file_url
 			if asset.thumbnail:
 				payload["cover_url"] = frappe.utils.get_url(asset.thumbnail)
+			# Log the video URL so we can verify it's reachable from Meta's servers
+			frappe.log_error(
+				title="Instagram Reel publish attempt",
+				message=f"post={post.name} video_url={file_url}",
+			)
 		else:
 			payload["image_url"] = file_url
 			if asset.alt_text:
