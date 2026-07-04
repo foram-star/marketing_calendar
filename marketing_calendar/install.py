@@ -59,7 +59,30 @@ def after_install():
 
 
 def after_migrate():
+	_copy_frontend_assets()
 	frappe.clear_cache()
+
+
+def _copy_frontend_assets():
+	"""
+	Explicitly copy public/frontend/ to the site's assets directory.
+
+	bench build copies app public files, but on Frappe Cloud the build step
+	sometimes doesn't re-copy files when only pre-built assets changed in git.
+	Running this on every migrate guarantees the site always serves the JS/CSS
+	that matches the currently-deployed commit, with no manual intervention.
+	"""
+	import os
+	import shutil
+
+	src = frappe.get_app_path("marketing_calendar", "public", "frontend")
+	dst = os.path.join(
+		frappe.get_site_path(), "public", "assets", "marketing_calendar", "frontend"
+	)
+	if os.path.isdir(src):
+		os.makedirs(dst, exist_ok=True)
+		shutil.copytree(src, dst, dirs_exist_ok=True)
+		frappe.logger().info(f"Feed: copied frontend assets from {src} to {dst}")
 
 
 def create_roles():
