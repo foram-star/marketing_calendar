@@ -642,3 +642,31 @@ def oauth_callback_x(code=None, state=None, error=None, error_description=None):
 		"X", identity["id"], identity.get("username"), access_token, expires_in, refresh_token=refresh_token
 	)
 	_redirect("/marketing/settings?connected=x")
+
+
+@frappe.whitelist(allow_guest=True)
+def diagnostic():
+	"""Returns what code version is actually running on the server."""
+	import os
+	app_path = frappe.get_app_path("marketing_calendar")
+	www_path = os.path.join(app_path, "www", "marketing.html")
+	assets_path = os.path.join(app_path, "public", "frontend", "assets")
+
+	html_ref = ""
+	if os.path.exists(www_path):
+		with open(www_path) as f:
+			for line in f:
+				if "index" in line and ".js" in line:
+					html_ref = line.strip()
+					break
+
+	index_files = []
+	if os.path.exists(assets_path):
+		index_files = [f for f in os.listdir(assets_path) if "index" in f and f.endswith(".js") and not f.endswith(".map")]
+
+	return {
+		"app_path": app_path,
+		"www_html_js_ref": html_ref,
+		"index_js_files_in_app": index_files,
+		"commit_indicator": "39dc6ce-fixed-filenames",
+	}
