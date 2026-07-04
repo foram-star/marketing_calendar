@@ -2,6 +2,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Button, Avatar } from 'frappe-ui'
+import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
 import ProjectPanel from '@/components/ProjectPanel.vue'
 import { projectsResource, fetchProjects, updateProject, STAGES, PRIORITY_META } from '@/data/projects'
 import { todosResource, fetchTodos, createTodo, updateTodo, deleteTodo } from '@/data/todos'
