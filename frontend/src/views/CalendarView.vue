@@ -267,23 +267,29 @@ function onPillLeave() {
           </button>
         </div>
       </div>
-      <div class="flex items-center rounded-lg border border-gray-200 bg-gray-100 p-0.5">
-        <button
-          class="flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[12px] font-medium transition-colors"
-          :class="view === 'day' ? 'bg-white text-gray-900 shadow-sm' : 'text-ink-gray-6 hover:text-gray-700'"
-          @click="view = 'day'"
-        ><LucideCircle class="h-3 w-3" />Day</button>
-        <button
-          class="flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[12px] font-medium transition-colors"
-          :class="view === 'week' ? 'bg-white text-gray-900 shadow-sm' : 'text-ink-gray-6 hover:text-gray-700'"
-          @click="view = 'week'"
-        ><LucideMoreHorizontal class="h-3 w-3" />Week</button>
-        <button
-          class="flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[12px] font-medium transition-colors"
-          :class="view === 'month' ? 'bg-white text-gray-900 shadow-sm' : 'text-ink-gray-6 hover:text-gray-700'"
-          @click="view = 'month'"
-        ><LucideLayoutGrid class="h-3 w-3" />Month</button>
-      </div>
+      <Popover class="relative">
+        <PopoverButton as="div">
+          <button class="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-gray-100 px-2.5 py-1.5 text-[12px] font-medium text-gray-700 hover:bg-gray-200">
+            <LucideCircle v-if="view === 'day'" class="h-3 w-3" />
+            <LucideMoreHorizontal v-else-if="view === 'week'" class="h-3 w-3" />
+            <LucideLayoutGrid v-else class="h-3 w-3" />
+            {{ view === 'day' ? 'Day' : view === 'week' ? 'Week' : 'Month' }}
+            <LucideChevronDown class="h-3 w-3 text-gray-400" />
+          </button>
+        </PopoverButton>
+        <PopoverPanel class="absolute right-0 top-full z-20 mt-1.5 w-36 rounded-lg border border-gray-100 bg-white py-1 shadow-lg">
+          <PopoverButton as="button"
+            v-for="opt in [{ key: 'day', label: 'Day', icon: LucideCircle }, { key: 'week', label: 'Week', icon: LucideMoreHorizontal }, { key: 'month', label: 'Month', icon: LucideLayoutGrid }]"
+            :key="opt.key"
+            class="flex w-full items-center gap-2.5 px-3 py-1.5 text-left text-[12.5px] hover:bg-gray-50"
+            :class="view === opt.key ? 'font-semibold text-gray-900' : 'text-gray-600'"
+            @click="view = opt.key"
+          >
+            <component :is="opt.icon" class="h-3.5 w-3.5" />
+            {{ opt.label }}
+          </PopoverButton>
+        </PopoverPanel>
+      </Popover>
     </div>
   </div>
 
