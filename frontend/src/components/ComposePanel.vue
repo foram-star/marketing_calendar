@@ -179,7 +179,15 @@ const canPublishNow = computed(() => ['Approved', 'Scheduled', 'Failed'].include
 // equally weighted, so it's clear they're alternatives, not separate steps.
 const TIMING_ACTIONS = new Set(['Schedule', 'Retry'])
 const timingTransitions = computed(() => workflow.state.transitions.filter((t) => TIMING_ACTIONS.has(t.action)))
-const otherTransitions = computed(() => workflow.state.transitions.filter((t) => !TIMING_ACTIONS.has(t.action)))
+const otherTransitions = computed(() =>
+  workflow.state.transitions.filter((t) => {
+    if (TIMING_ACTIONS.has(t.action)) return false
+    // Hide "Submit for Review" when no reviewer is assigned — without a reviewer
+    // the review step has no one to notify, so go straight to Publish/Schedule.
+    if (t.action === 'Submit for Review' && !form.reviewer) return false
+    return true
+  })
+)
 const scheduledOnLabel = computed(() => {
   if (!form.scheduledOn) return ''
   const [datePart, timePart] = form.scheduledOn.split(' ')
