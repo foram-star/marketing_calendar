@@ -478,7 +478,7 @@ def _save_connected_account(platform, external_id, label, access_token, expires_
 LINKEDIN_AUTHORIZE_URL = "https://www.linkedin.com/oauth/v2/authorization"
 LINKEDIN_TOKEN_URL = "https://www.linkedin.com/oauth/v2/accessToken"
 LINKEDIN_USERINFO_URL = "https://api.linkedin.com/v2/userinfo"
-LINKEDIN_SCOPES = "openid profile w_member_social"
+LINKEDIN_SCOPES = "openid profile w_member_social w_organization_social"
 
 
 @frappe.whitelist()
@@ -544,6 +544,37 @@ def oauth_callback_linkedin(code=None, state=None, error=None, error_description
 
 	frappe.local.login_manager.login_as(connecting_user)
 	_save_connected_account("LinkedIn", identity["sub"], identity.get("name"), access_token, expires_in)
+
+	# Try to auto-detect the first LinkedIn company page the user administers
+	try:
+		person_urn = f"urn:li:person:{identity['sub']}"
+		org_resp = requests.get(
+			"https://api.linkedin.com/rest/organizationMemberships",
+			headers={
+				"Authorization": f"Bearer {access_token}",
+				"Linkedin-Version": "202506",
+				"X-Restli-Protocol-Version": "2.0.0",
+			},
+			params={"q": "roleAssignee", "roleAssignee": person_urn, "role": "ADMINISTRATOR", "state": "APPROVED"},
+			timeout=10,
+		)
+		if org_resp.ok:
+			elements = org_resp.json().get("elements", [])
+			if elements:
+				org_urn = elements[0].get("organization", "")
+				org_id = org_urn.replace("urn:li:organization:", "")
+				if org_id:
+					acct = frappe.db.get_value(
+						"Feed Social Account",
+						{"platform": "LinkedIn", "external_account_id": identity["sub"]},
+						"name",
+					)
+					if acct:
+						frappe.db.set_value("Feed Social Account", acct, "organization_id", org_id)
+						frappe.db.commit()
+	except Exception:
+		pass  # non-critical — user can set org ID manually in Settings
+
 	_redirect("/marketing/settings?connected=linkedin")
 
 

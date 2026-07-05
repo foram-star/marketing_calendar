@@ -19,7 +19,8 @@
   "cb_02",
   "token_expires_on",
   "last_synced_on",
-  "last_error"
+  "last_error",
+  "organization_id"
  ],
  "fields": [
   {
@@ -114,6 +115,13 @@
    "fieldtype": "Small Text",
    "label": "Last Error",
    "read_only": 1
+  },
+  {
+   "fieldname": "organization_id",
+   "fieldtype": "Data",
+   "label": "LinkedIn Organization ID",
+   "description": "Numeric ID of the company page to post as. Leave blank to post as personal profile. Found in your LinkedIn Company Admin URL.",
+   "depends_on": "eval:doc.platform == \"LinkedIn\""
   }
  ],
  "links": [],

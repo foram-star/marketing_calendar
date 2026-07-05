@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { Button, TextInput } from 'frappe-ui'
+import { Button, TextInput, call } from 'frappe-ui'
 import PlatformBadge from '@/components/PlatformBadge.vue'
 import CopyableField from '@/components/CopyableField.vue'
 import PasswordField from '@/components/PasswordField.vue'
@@ -56,6 +56,19 @@ async function saveCredentials() {
   }
 }
 const saving = computed(() => settings.save.loading)
+
+async function saveOrgId(acc) {
+  try {
+    await call('frappe.client.set_value', {
+      doctype: 'Feed Social Account',
+      name: acc.name,
+      fieldname: 'organization_id',
+      value: acc.organization_id || '',
+    })
+  } catch (e) {
+    console.error('Could not save organization ID', e)
+  }
+}
 </script>
 
 <template>
@@ -120,6 +133,26 @@ const saving = computed(() => settings.save.loading)
             </div>
             <span v-if="acc.last_error" class="truncate text-[10.5px] text-red-500">{{ acc.last_error }}</span>
             <span v-else-if="acc.token_expires_on" class="text-[10.5px] text-ink-gray-6">Token expires {{ fmtDate(acc.token_expires_on) }}</span>
+            <!-- Company page selector -->
+            <div class="mt-1 flex flex-col gap-1">
+              <label class="text-[10.5px] font-medium text-gray-600">
+                Post as <span class="text-ink-gray-6">· company page ID (auto-detected, edit if needed)</span>
+              </label>
+              <div class="flex gap-1.5">
+                <input
+                  v-model="acc.organization_id"
+                  placeholder="Leave blank for personal profile"
+                  class="flex-1 rounded-md border border-gray-200 px-2 py-1 text-[11.5px] outline-none"
+                />
+                <button
+                  class="rounded-md bg-gray-800 px-2.5 py-1 text-[11px] font-medium text-white hover:bg-gray-700"
+                  @click="saveOrgId(acc)"
+                >Save</button>
+              </div>
+              <p class="m-0 text-[10px] text-ink-gray-6">
+                Blank = personal profile · Numeric ID = company page (find it in your LinkedIn Company Admin URL)
+              </p>
+            </div>
           </div>
         </div>
         <Button class="w-full justify-center" variant="outline" @click="onConnectClick('LinkedIn')">
