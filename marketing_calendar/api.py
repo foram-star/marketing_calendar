@@ -478,7 +478,7 @@ def _save_connected_account(platform, external_id, label, access_token, expires_
 LINKEDIN_AUTHORIZE_URL = "https://www.linkedin.com/oauth/v2/authorization"
 LINKEDIN_TOKEN_URL = "https://www.linkedin.com/oauth/v2/accessToken"
 LINKEDIN_USERINFO_URL = "https://api.linkedin.com/v2/userinfo"
-LINKEDIN_SCOPES = "openid profile w_member_social w_organization_social"
+LINKEDIN_SCOPES = "openid profile w_member_social"
 
 
 @frappe.whitelist()
