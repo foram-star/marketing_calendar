@@ -142,31 +142,25 @@ async function setLinkedInOrg(orgId) {
             <span v-if="acc.last_error" class="truncate text-[10.5px] text-red-500">{{ acc.last_error }}</span>
             <span v-else-if="acc.token_expires_on" class="text-[10.5px] text-ink-gray-6">Token expires {{ fmtDate(acc.token_expires_on) }}</span>
 
-            <!-- Post-as selector -->
+            <!-- Company page ID — manual entry -->
             <div class="mt-1.5 flex flex-col gap-1">
-              <div class="flex items-center justify-between">
-                <label class="text-[10.5px] font-medium text-gray-600">Post as</label>
-                <button class="text-[10px] text-ink-gray-6 hover:underline" @click="loadLinkedInOrgs">
-                  {{ linkedinOrgsLoading ? 'Loading…' : linkedinOrgs ? 'Refresh' : 'Load pages' }}
-                </button>
+              <label class="text-[10.5px] font-medium text-gray-600">
+                Post as company page
+                <span class="font-normal text-ink-gray-6"> · leave blank for personal profile</span>
+              </label>
+              <div class="flex gap-1.5">
+                <input
+                  v-model="acc.organization_id"
+                  placeholder="Company page numeric ID (e.g. 12345678)"
+                  class="flex-1 rounded-md border border-gray-200 px-2.5 py-1.5 text-[11.5px] outline-none"
+                />
+                <button
+                  class="rounded-md bg-gray-800 px-2.5 py-1 text-[11px] font-medium text-white hover:bg-gray-700"
+                  @click="saveOrgId(acc)"
+                >Save</button>
               </div>
-              <button v-if="!linkedinOrgs && !linkedinOrgsLoading"
-                class="w-full rounded-md border border-dashed border-gray-200 bg-gray-50 px-2.5 py-2 text-left text-[11px] text-ink-gray-6 hover:bg-gray-100"
-                @click="loadLinkedInOrgs">
-                Click to load your company pages…
-              </button>
-              <div v-else-if="linkedinOrgsLoading" class="text-[11px] text-ink-gray-6">Fetching your company pages…</div>
-              <select v-else
-                class="form-select w-full text-[11.5px]"
-                :value="linkedinOrgs.current_org_id"
-                @change="setLinkedInOrg($event.target.value)">
-                <option value="">{{ linkedinOrgs.personal_name }} — personal profile</option>
-                <option v-for="org in linkedinOrgs.organizations" :key="org.id" :value="org.id">
-                  {{ org.name }}
-                </option>
-              </select>
-              <p v-if="linkedinOrgs && !linkedinOrgs.organizations.length" class="m-0 text-[10px] text-amber-600">
-                No company pages found. Make sure you're an admin of the page, then reconnect LinkedIn to get the w_organization_social scope.
+              <p class="m-0 text-[10px] text-ink-gray-6">
+                Find the ID: LinkedIn Company Admin → URL contains <code>companyId=XXXXX</code>
               </p>
             </div>
           </div>
