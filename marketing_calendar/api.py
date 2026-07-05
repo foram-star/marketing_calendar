@@ -670,3 +670,23 @@ def diagnostic():
 		"index_js_files_in_app": index_files,
 		"commit_indicator": "39dc6ce-fixed-filenames",
 	}
+
+
+@frappe.whitelist()
+def debug_instagram_url():
+	"""Returns the Instagram authorization URL without redirecting — for debugging."""
+	settings = frappe.get_single("Marketing Calendar Settings")
+	from urllib.parse import urlencode
+	params = {
+		"client_id": settings.meta_app_id,
+		"redirect_uri": settings.meta_redirect_uri,
+		"response_type": "code",
+		"scope": INSTAGRAM_SCOPES,
+		"state": "debug_test",
+	}
+	return {
+		"auth_url": f"{INSTAGRAM_AUTHORIZE_URL}?{urlencode(params)}",
+		"app_id": settings.meta_app_id,
+		"redirect_uri": settings.meta_redirect_uri,
+		"scope": INSTAGRAM_SCOPES,
+	}
