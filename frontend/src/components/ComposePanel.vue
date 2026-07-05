@@ -251,7 +251,10 @@ const previewPlatforms = computed(() =>
     .map((p) => ({ id: p.id, name: p.name, caption: form.platforms[p.id].caption, link_url: form.platforms[p.id].link_url })),
 )
 const accountName = computed(() => memberById(form.assigned_to).name)
-const canSave = computed(() => selectedPlatforms.value.length > 0)
+const canSave = computed(() =>
+  selectedPlatforms.value.length > 0 &&
+  form.assets.every((a) => a.file_type !== 'Video' || a.public_url.trim())
+)
 function blogPostTitle(name) {
   return (blogPostsResource.data || []).find((b) => b.name === name)?.title || ''
 }
@@ -339,33 +342,51 @@ async function handleFiles(fileList) {
     const meta = isImage ? { ...(await readImageDims(localPreview)), duration: null } : await readVideoMeta(localPreview)
     const asset = reactive({
       id: `a${Math.random().toString(36).slice(2)}`,
-      file_url: localPreview,
+      file_url: localPreview,       // blob URL — local preview only
+      public_url: '',               // CDN/public URL for publishing (videos only)
       alt_text: '',
       file_type: isImage ? 'Image' : 'Video',
       width: meta.width,
       height: meta.height,
       duration: meta.duration ?? null,
       size: file.size,
-      uploading: true,
+      uploading: !isImage,          // images upload; videos skip upload
+      needs_public_url: !isImage,   // videos need a CDN URL for publishing
     })
     form.assets.push(asset)
-    const { upload } = useFileUpload()
-    try {
-      const result = await upload(file, { private: 0 })
-      asset.file_url = result.file_url
-    } catch (e) {
-      errorMessage.value = `Failed to upload ${file.name}.`
-      form.assets = form.assets.filter((a) => a.id !== asset.id)
-    } finally {
+    if (isImage) {
+      // Images: upload to Frappe (small enough)
+      const { upload } = useFileUpload()
+      asset.uploading = true
+      try {
+        const result = await upload(file, { private: 0 })
+        asset.file_url = result.file_url
+        asset.needs_public_url = false
+      } catch (e) {
+        errorMessage.value = `Failed to upload ${file.name}.`
+        form.assets = form.assets.filter((a) => a.id !== asset.id)
+      } finally {
+        asset.uploading = false
+      }
+    } else {
+      // Videos: skip Frappe upload — use local blob for preview,
+      // require user to paste a public CDN URL for actual publishing.
       asset.uploading = false
     }
   }
+}
+
+function applyPublicUrl(asset) {
+  const url = (asset.public_url || '').trim()
+  if (!url) return
+  asset.needs_public_url = false
 }
 
 function onFileInputChange(e) {
   handleFiles(e.target.files)
   e.target.value = ''
 }
+
 async function onThumbnailChange(asset, e) {
   const file = e.target.files[0]
   e.target.value = ''
@@ -456,7 +477,7 @@ async function onSave() {
       assets: form.assets
         .filter((a) => !a.uploading)
         .map((a) => ({
-          file: a.file_url,
+          file: a.file_type === 'Video' ? (a.public_url || a.file_url) : a.file_url,
           thumbnail: a.thumbnail_url || null,
           alt_text: a.alt_text,
           file_type: a.file_type,
@@ -597,6 +618,7 @@ async function onDelete() {
               <input ref="fileInput" type="file" accept="image/*,video/*" multiple class="hidden" @change="onFileInputChange" @click.stop />
             </div>
 
+
             <div v-if="form.assets.length" class="mt-3 flex flex-col gap-3">
               <div
                 v-for="(asset, idx) in form.assets"
@@ -619,7 +641,7 @@ async function onDelete() {
                     </div>
                     <div class="text-[11px] text-ink-gray-6">
                       {{ asset.width }}×{{ asset.height }}px
-                      <template v-if="asset.duration != null"> · {{ asset.duration }}s</template>
+                      <template v-if="asset.duration"> · {{ asset.duration }}s</template>
                     </div>
                   </div>
                   <button class="flex h-6.5 w-6.5 shrink-0 items-center justify-center rounded-md bg-gray-100 text-gray-400" @click="removeAsset(asset.id)">
@@ -644,7 +666,27 @@ async function onDelete() {
                   <LucideTriangleAlert class="h-3.5 w-3.5 text-orange-500" />
                   <span class="text-[11.5px] font-medium text-orange-700">{{ firstWarning(asset) }}</span>
                 </div>
+                <!-- Video: require public URL since Frappe has a 25MB upload limit -->
+                <div v-if="asset.file_type === 'Video'" class="ml-7 mt-2.5">
+                  <label class="text-[11px] font-medium text-gray-600">
+                    Public video URL <span class="text-red-500">*</span>
+                    <span class="font-normal text-ink-gray-6"> — Dropbox, Google Drive, S3, CDN, etc.</span>
+                  </label>
+                  <div class="mt-1 flex gap-1.5">
+                    <input
+                      v-model="asset.public_url"
+                      placeholder="https://your-cdn.com/video.mp4"
+                      class="flex-1 rounded-md border px-2.5 py-1.5 text-[11.5px] outline-none"
+                      :class="asset.needs_public_url && !asset.public_url ? 'border-amber-300 bg-amber-50' : 'border-gray-200'"
+                      @blur="applyPublicUrl(asset)"
+                    />
+                  </div>
+                  <p v-if="asset.needs_public_url && !asset.public_url" class="m-0 mt-1 text-[10.5px] text-amber-600">
+                    Required — Instagram fetches the video directly from this URL when publishing.
+                  </p>
+                </div>
                 <input
+                  v-if="asset.file_type === 'Image'"
                   v-model="asset.alt_text"
                   placeholder="Alt text for accessibility (optional)"
                   class="ml-7 mt-2.5 w-[calc(100%-1.75rem)] rounded-md border border-gray-200 px-2.5 py-1.5 text-[11.5px] outline-none"
