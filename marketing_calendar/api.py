@@ -675,7 +675,7 @@ def diagnostic():
 @frappe.whitelist()
 def debug_instagram_url():
 	"""Returns the Instagram authorization URL without redirecting — for debugging."""
-	settings = frappe.get_single("Marketing Calendar Settings")
+	settings = frappe.get_single("Feed Settings")
 	from urllib.parse import urlencode
 	params = {
 		"client_id": settings.meta_app_id,
