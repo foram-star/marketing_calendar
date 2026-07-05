@@ -544,37 +544,6 @@ def oauth_callback_linkedin(code=None, state=None, error=None, error_description
 
 	frappe.local.login_manager.login_as(connecting_user)
 	_save_connected_account("LinkedIn", identity["sub"], identity.get("name"), access_token, expires_in)
-
-	# Try to auto-detect the first LinkedIn company page the user administers
-	try:
-		person_urn = f"urn:li:person:{identity['sub']}"
-		org_resp = requests.get(
-			"https://api.linkedin.com/rest/organizationMemberships",
-			headers={
-				"Authorization": f"Bearer {access_token}",
-				"Linkedin-Version": "202506",
-				"X-Restli-Protocol-Version": "2.0.0",
-			},
-			params={"q": "roleAssignee", "roleAssignee": person_urn, "role": "ADMINISTRATOR", "state": "APPROVED"},
-			timeout=10,
-		)
-		if org_resp.ok:
-			elements = org_resp.json().get("elements", [])
-			if elements:
-				org_urn = elements[0].get("organization", "")
-				org_id = org_urn.replace("urn:li:organization:", "")
-				if org_id:
-					acct = frappe.db.get_value(
-						"Feed Social Account",
-						{"platform": "LinkedIn", "external_account_id": identity["sub"]},
-						"name",
-					)
-					if acct:
-						frappe.db.set_value("Feed Social Account", acct, "organization_id", org_id)
-						frappe.db.commit()
-	except Exception:
-		pass  # non-critical — user can set org ID manually in Settings
-
 	_redirect("/marketing/settings?connected=linkedin")
 
 
@@ -720,4 +689,64 @@ def debug_instagram_url():
 		"app_id": settings.meta_app_id,
 		"redirect_uri": settings.meta_redirect_uri,
 		"scope": INSTAGRAM_SCOPES,
+	}
+
+
+@frappe.whitelist()
+def get_linkedin_organizations():
+	"""Fetch all LinkedIn company pages the connected account can post to."""
+	account_name = frappe.db.get_value(
+		"Feed Social Account",
+		{"platform": "LinkedIn", "enabled": 1, "status": "Connected"},
+		"name",
+		order_by="modified desc",
+	)
+	if not account_name:
+		return {"personal": None, "organizations": []}
+
+	account = frappe.get_doc("Feed Social Account", account_name)
+	access_token = account.get_password("access_token")
+	person_urn = f"urn:li:person:{account.external_account_id}"
+
+	headers = {
+		"Authorization": f"Bearer {access_token}",
+		"Linkedin-Version": "202506",
+		"X-Restli-Protocol-Version": "2.0.0",
+	}
+
+	memberships_resp = requests.get(
+		"https://api.linkedin.com/rest/organizationMemberships",
+		headers=headers,
+		params={"q": "roleAssignee", "roleAssignee": person_urn, "role": "ADMINISTRATOR", "state": "APPROVED"},
+		timeout=10,
+	)
+
+	organizations = []
+	if memberships_resp.ok:
+		for elem in memberships_resp.json().get("elements", []):
+			org_urn = elem.get("organization", "")
+			org_id = org_urn.replace("urn:li:organization:", "")
+			if not org_id:
+				continue
+			# Try to fetch the org name
+			name = f"Organization {org_id}"
+			try:
+				org_resp = requests.get(
+					f"https://api.linkedin.com/rest/organizations/{org_id}",
+					headers=headers,
+					params={"fields": "localizedName,vanityName"},
+					timeout=5,
+				)
+				if org_resp.ok:
+					data = org_resp.json()
+					name = data.get("localizedName") or data.get("vanityName") or name
+			except Exception:
+				pass
+			organizations.append({"id": org_id, "name": name})
+
+	return {
+		"account": account_name,
+		"current_org_id": account.get("organization_id") or "",
+		"personal_name": account.account_label or account.external_username or "Personal Profile",
+		"organizations": organizations,
 	}

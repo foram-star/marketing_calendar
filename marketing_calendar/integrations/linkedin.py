@@ -148,13 +148,7 @@ def publish(post, platform_row):
 
 	account = _connected_account()
 	access_token = account.get_password("access_token")
-	# Post as organization (company page) if an organization_id is set,
-	# otherwise fall back to the personal profile.
-	org_id = account.get("organization_id") or ""
-	author_urn = (
-		f"urn:li:organization:{org_id}" if org_id
-		else f"urn:li:person:{account.external_account_id}"
-	)
+	author_urn = f"urn:li:person:{account.external_account_id}"
 
 	images = [a for a in post.assets if a.file_type == "Image"][:1]
 	videos = [a for a in post.assets if a.file_type == "Video"][:1]
