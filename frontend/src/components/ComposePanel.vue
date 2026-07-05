@@ -182,11 +182,15 @@ const timingTransitions = computed(() => workflow.state.transitions.filter((t) =
 const otherTransitions = computed(() =>
   workflow.state.transitions.filter((t) => {
     if (TIMING_ACTIONS.has(t.action)) return false
-    // Hide "Submit for Review" when no reviewer is assigned — without a reviewer
-    // the review step has no one to notify, so go straight to Publish/Schedule.
     if (t.action === 'Submit for Review' && !form.reviewer) return false
     return true
   })
+)
+// When no reviewer and post is Draft: show a direct "Approve" button that
+// auto-submits for review then approves in one click, skipping the review step.
+const canDirectApprove = computed(() =>
+  !!livePost.name && livePost.status === 'Draft' && !form.reviewer &&
+  workflow.state.transitions.some((t) => t.action === 'Submit for Review')
 )
 const scheduledOnLabel = computed(() => {
   if (!form.scheduledOn) return ''
@@ -205,6 +209,26 @@ const isLocked = computed(() =>
   ['Approved', 'Scheduled', 'Published', 'Partially Published', 'Failed'].includes(livePost.status)
 )
 const isReadOnly = computed(() => isLocked.value && !editMode.value)
+
+async function runDirectApprove() {
+  if (!livePost.name || actionLoading.value) return
+  actionLoading.value = 'Approve'
+  errorMessage.value = ''
+  try {
+    // Submit for Review (Draft → In Review), then immediately Approve (In Review → Approved)
+    let updated = await workflow.applyAction('Submit for Review')
+    if (updated?.status) livePost.status = updated.status
+    updated = await workflow.applyAction('Approve')
+    if (updated?.status) livePost.status = updated.status
+    if (updated?.platforms) platformRows.value = updated.platforms
+    await workflow.refresh()
+    emit('workflow-changed')
+  } catch (e) {
+    errorMessage.value = e?.messages?.[0] || 'Could not approve.'
+  } finally {
+    actionLoading.value = ''
+  }
+}
 
 async function runWorkflowAction(action) {
   if (!livePost.name || actionLoading.value) return
@@ -942,7 +966,17 @@ async function onDelete() {
                   >
                 </div>
               </div>
-              <p v-if="!otherTransitions.length && !timingTransitions.length && !canPublishNow" class="m-0 text-[12px] text-ink-gray-6">
+              <!-- No reviewer: single Approve button that auto-submits + approves -->
+              <Button
+                v-if="canDirectApprove"
+                size="sm"
+                variant="solid"
+                :loading="actionLoading === 'Approve'"
+                :disabled="!!actionLoading"
+                @click="runDirectApprove"
+              >Approve</Button>
+
+              <p v-if="!otherTransitions.length && !timingTransitions.length && !canPublishNow && !canDirectApprove" class="m-0 text-[12px] text-ink-gray-6">
                 No actions available.
               </p>
 
