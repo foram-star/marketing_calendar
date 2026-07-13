@@ -552,7 +552,7 @@ def oauth_callback_linkedin(code=None, state=None, error=None, error_description
 	try:
 		person_urn = f"urn:li:person:{identity['sub']}"
 		org_resp = requests.get(
-			"https://api.linkedin.com/rest/organizationMemberships",
+			"https://api.linkedin.com/rest/organizationAcls",
 			headers={
 				"Authorization": f"Bearer {access_token}",
 				"Linkedin-Version": "202506",
@@ -564,7 +564,8 @@ def oauth_callback_linkedin(code=None, state=None, error=None, error_description
 		if org_resp.ok:
 			elements = org_resp.json().get("elements", [])
 			if elements:
-				org_id = elements[0].get("organization", "").replace("urn:li:organization:", "")
+				org_urn = elements[0].get("organization") or elements[0].get("organizationTarget") or ""
+				org_id = org_urn.replace("urn:li:organization:", "")
 				if org_id:
 					acct = frappe.db.get_value(
 						"Feed Social Account",
@@ -747,17 +748,17 @@ def get_linkedin_organizations():
 		"X-Restli-Protocol-Version": "2.0.0",
 	}
 
-	memberships_resp = requests.get(
-		"https://api.linkedin.com/rest/organizationMemberships",
+	acls_resp = requests.get(
+		"https://api.linkedin.com/rest/organizationAcls",
 		headers=headers,
 		params={"q": "roleAssignee", "roleAssignee": person_urn, "role": "ADMINISTRATOR", "state": "APPROVED"},
 		timeout=10,
 	)
 
 	organizations = []
-	if memberships_resp.ok:
-		for elem in memberships_resp.json().get("elements", []):
-			org_urn = elem.get("organization", "")
+	if acls_resp.ok:
+		for elem in acls_resp.json().get("elements", []):
+			org_urn = elem.get("organization") or elem.get("organizationTarget") or ""
 			org_id = org_urn.replace("urn:li:organization:", "")
 			if not org_id:
 				continue
