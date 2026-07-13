@@ -149,13 +149,11 @@ after_migrate = "marketing_calendar.install.after_migrate"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+	"File": {
+		"after_insert": "marketing_calendar.media.fix_image_orientation",
+	},
+}
 
 # Scheduled Tasks
 # ---------------

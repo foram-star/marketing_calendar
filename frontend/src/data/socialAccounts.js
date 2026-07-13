@@ -5,7 +5,7 @@ export const socialAccountsResource = createResource({
   auto: false,
   params: {
     doctype: 'Feed Social Account',
-    fields: ['name', 'platform', 'account_label', 'enabled', 'status', 'external_username', 'token_expires_on', 'last_synced_on', 'last_error'],
+    fields: ['name', 'platform', 'account_label', 'enabled', 'status', 'external_username', 'external_account_id', 'organization_id', 'token_expires_on', 'last_synced_on', 'last_error'],
     limit_page_length: 0,
   },
 })

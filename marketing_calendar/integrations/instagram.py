@@ -100,7 +100,7 @@ def publish(post, platform_row):
 	access_token = account.get_password("access_token")
 	ig_user_id = account.external_account_id
 
-	assets = post.assets[:10]  # Instagram carousel cap is 10
+	assets = post.assets[:20]  # Instagram carousel cap is 20 items
 	caption = platform_row.caption
 	collaborators = _collaborators(platform_row)
 

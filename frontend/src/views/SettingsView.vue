@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { Button, TextInput, call } from 'frappe-ui'
 import PlatformBadge from '@/components/PlatformBadge.vue'
 import CopyableField from '@/components/CopyableField.vue'
@@ -45,37 +45,29 @@ function fmtDate(dt) {
 
 const saveError = ref('')
 const savedNotice = ref(false)
+const saving = ref(false)
 async function saveCredentials() {
   saveError.value = ''
+  saving.value = true
   try {
     await settings.save.submit()
+    // Persist LinkedIn company-page IDs alongside everything else here —
+    // one primary action, not a separate save button per account.
+    for (const acc of accountsForPlatform('LinkedIn')) {
+      await call('frappe.client.set_value', {
+        doctype: 'Feed Social Account',
+        name: acc.name,
+        fieldname: 'organization_id',
+        value: (acc.organization_id || '').trim(),
+      })
+    }
     savedNotice.value = true
     setTimeout(() => (savedNotice.value = false), 2500)
   } catch (e) {
     saveError.value = e?.messages?.[0] || 'Could not save credentials.'
+  } finally {
+    saving.value = false
   }
-}
-const saving = computed(() => settings.save.loading)
-
-// LinkedIn org picker
-const linkedinOrgs = ref(null)   // null = not loaded, [] = loaded but no orgs
-const linkedinOrgsLoading = ref(false)
-async function loadLinkedInOrgs() {
-  linkedinOrgsLoading.value = true
-  try {
-    linkedinOrgs.value = await call('marketing_calendar.api.get_linkedin_organizations')
-  } catch { linkedinOrgs.value = null }
-  finally { linkedinOrgsLoading.value = false }
-}
-async function setLinkedInOrg(orgId) {
-  if (!linkedinOrgs.value?.account) return
-  await call('frappe.client.set_value', {
-    doctype: 'Feed Social Account',
-    name: linkedinOrgs.value.account,
-    fieldname: 'organization_id',
-    value: orgId,
-  })
-  linkedinOrgs.value.current_org_id = orgId
 }
 </script>
 
@@ -148,19 +140,13 @@ async function setLinkedInOrg(orgId) {
                 Post as company page
                 <span class="font-normal text-ink-gray-6"> · leave blank for personal profile</span>
               </label>
-              <div class="flex gap-1.5">
-                <input
-                  v-model="acc.organization_id"
-                  placeholder="Company page numeric ID (e.g. 12345678)"
-                  class="flex-1 rounded-md border border-gray-200 px-2.5 py-1.5 text-[11.5px] outline-none"
-                />
-                <button
-                  class="rounded-md bg-gray-800 px-2.5 py-1 text-[11px] font-medium text-white hover:bg-gray-700"
-                  @click="saveOrgId(acc)"
-                >Save</button>
-              </div>
+              <input
+                v-model="acc.organization_id"
+                placeholder="Company page numeric ID (e.g. 12345678)"
+                class="rounded-md border border-gray-200 px-2.5 py-1.5 text-[11.5px] outline-none"
+              />
               <p class="m-0 text-[10px] text-ink-gray-6">
-                Find the ID: LinkedIn Company Admin → URL contains <code>companyId=XXXXX</code>
+                Find the ID: LinkedIn Company Admin → URL contains <code>companyId=XXXXX</code>. Click <b>Save credentials</b> above to store it.
               </p>
             </div>
           </div>

@@ -13,6 +13,7 @@ import FeedLogo from '@/components/FeedLogo.vue'
 import LucideBell from '~icons/lucide/bell'
 import LucideLogOut from '~icons/lucide/log-out'
 import LucideExternalLink from '~icons/lucide/external-link'
+import LucideUserPlus from '~icons/lucide/user-plus'
 import { logout } from '@/composables/useAuth'
 
 const route = useRoute()
@@ -101,6 +102,16 @@ function fmtNotificationTime(creation) {
 async function handleLogout() {
   await logout()
   router.push('/marketing/login')
+}
+
+// Invite link — copies the public self-serve signup URL so an admin can
+// share it with teammates rather than needing a separate invite flow.
+const inviteLinkCopied = ref(false)
+async function copyInviteLink() {
+  const url = `${window.location.origin}/marketing/signup`
+  await navigator.clipboard.writeText(url)
+  inviteLinkCopied.value = true
+  setTimeout(() => (inviteLinkCopied.value = false), 2000)
 }
 </script>
 
@@ -203,6 +214,13 @@ async function handleLogout() {
                 <LucideExternalLink class="h-3.5 w-3.5 shrink-0 text-gray-400" />
                 View in Desk
               </a>
+              <button
+                class="flex w-full items-center gap-2.5 px-3.5 py-2 text-left text-[12.5px] text-gray-700 hover:bg-gray-50"
+                @click="copyInviteLink"
+              >
+                <LucideUserPlus class="h-3.5 w-3.5 shrink-0 text-gray-400" />
+                {{ inviteLinkCopied ? 'Invite link copied' : 'Invite people' }}
+              </button>
               <button
                 class="flex w-full items-center gap-2.5 px-3.5 py-2 text-left text-[12.5px] text-gray-700 hover:bg-gray-50"
                 @click="handleLogout"

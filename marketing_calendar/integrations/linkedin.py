@@ -148,7 +148,11 @@ def publish(post, platform_row):
 
 	account = _connected_account()
 	access_token = account.get_password("access_token")
-	author_urn = f"urn:li:person:{account.external_account_id}"
+	org_id = (account.get("organization_id") or "").strip()
+	# Company-page URN per LinkedIn's URN docs: urn:li:organization:{id}.
+	# Falls back to the personal-profile URN (urn:li:person:{id}) when no
+	# company page is configured.
+	author_urn = f"urn:li:organization:{org_id}" if org_id else f"urn:li:person:{account.external_account_id}"
 
 	images = [a for a in post.assets if a.file_type == "Image"][:1]
 	videos = [a for a in post.assets if a.file_type == "Video"][:1]
