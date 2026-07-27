@@ -638,7 +638,7 @@ async function onDelete() {
             >
               <LucideUpload class="h-6 w-6 text-gray-400" />
               <span class="text-[13px] font-semibold text-gray-700">Drag & drop, or click to browse</span>
-              <span class="text-[11.5px] text-ink-gray-6">JPEG or MP4 · up to 10 assets · Instagram videos publish as Reels (9:16, 3–90s)</span>
+              <span class="text-[11.5px] text-ink-gray-6">JPEG or MP4 · up to 20 assets · Instagram videos publish as Reels (9:16, 3s–3min)</span>
               <input ref="fileInput" type="file" accept="image/*,video/*" multiple class="hidden" @change="onFileInputChange" @click.stop />
             </div>
 

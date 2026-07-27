@@ -47,11 +47,11 @@ export const PLATFORMS = {
     guide: '1080×1350px (4:5) · or 1080×1080px square',
     ratio: 4 / 5,
     ratioLabel: '4:5',
-    videoGuide: '1080×1920px (9:16) · MP4 · 3–90 sec · Published as Reel',
+    videoGuide: '1080×1920px (9:16) · MP4 · 3 sec – 3 min · Published as Reel',
     videoRatio: 9 / 16,
     videoRatioLabel: '9:16 Reel',
     videoMinSec: 3,
-    videoMaxSec: 90,
+    videoMaxSec: 180,
     hasLink: true,
   },
   blog: {
